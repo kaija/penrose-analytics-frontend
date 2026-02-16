@@ -1,9 +1,10 @@
 /**
  * Project Invitations API Routes
  * 
+ * GET /api/projects/[id]/invitations - List invitations
  * POST /api/projects/[id]/invitations - Create invitation
  * 
- * Requirements: 5.1, 5.4
+ * Requirements: 5.1, 5.4, 5.10
  */
 
 import { NextRequest } from 'next/server';
@@ -24,6 +25,58 @@ import {
 } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
+
+/**
+ * GET /api/projects/[id]/invitations
+ * List all invitations for a project
+ * Only owners and admins can view invitations
+ * 
+ * Requirements: 5.10
+ */
+export const GET = withErrorHandler(async (
+  request: NextRequest,
+  context?: { params: Record<string, string> }
+) => {
+  // Validate session
+  const session = await validateSession();
+  if (!session) {
+    throw new AuthenticationError();
+  }
+
+  // Get project ID from params
+  const projectId = context?.params?.id;
+  if (!projectId) {
+    throw new NotFoundError('Project');
+  }
+
+  // Check if project exists
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project) {
+    throw new NotFoundError('Project');
+  }
+
+  // Check user's role in the project
+  const role = await getUserRole(session.userId, projectId);
+  if (!role) {
+    throw new AuthorizationError('You are not a member of this project');
+  }
+
+  // Only owners and admins can view invitations
+  if (role !== 'owner' && role !== 'admin') {
+    throw new AuthorizationError('Only owners and admins can view invitations');
+  }
+
+  // Get all invitations for the project
+  const invitations = await prisma.invitation.findMany({
+    where: { projectId },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return successResponse(invitations);
+});
 
 /**
  * POST /api/projects/[id]/invitations

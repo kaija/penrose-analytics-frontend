@@ -3,7 +3,14 @@ import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
 
 describe('Invitation Creation', () => {
-  // Clean up test data after each test
+  // Clean up test data before and after each test
+  beforeEach(async () => {
+    await prisma.invitation.deleteMany({});
+    await prisma.projectMembership.deleteMany({});
+    await prisma.project.deleteMany({});
+    await prisma.user.deleteMany({});
+  });
+
   afterEach(async () => {
     await prisma.invitation.deleteMany({});
     await prisma.projectMembership.deleteMany({});

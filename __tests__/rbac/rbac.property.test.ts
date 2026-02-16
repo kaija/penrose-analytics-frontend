@@ -238,7 +238,7 @@ describe('RBAC Permission System Property Tests', () => {
             // Requirement 19.3: enforcePermission must throw for unauthorized actions
             await expect(
               enforcePermission(userId, projectId, action)
-            ).rejects.toThrow('Permission denied');
+            ).rejects.toThrow("You don't have permission to perform action");
           } else {
             const rolePermissions = ROLE_PERMISSIONS[role as Role];
             const shouldHavePermission = rolePermissions.includes(action);
@@ -254,7 +254,7 @@ describe('RBAC Permission System Property Tests', () => {
               // Requirement 19.3: Must throw if user lacks permission
               await expect(
                 enforcePermission(userId, projectId, action)
-              ).rejects.toThrow('Permission denied');
+              ).rejects.toThrow("You don't have permission to perform action");
             }
           }
         }

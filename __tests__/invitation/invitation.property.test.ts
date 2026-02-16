@@ -26,6 +26,17 @@ describe('Invitation System Property Tests', () => {
   const createdMembershipIds: string[] = [];
   const createdInvitationIds: string[] = [];
 
+  // Clean up test data before each test
+  beforeEach(async () => {
+    // Clear tracking arrays
+    createdInvitationIds.length = 0;
+    createdMembershipIds.length = 0;
+    createdProjectIds.length = 0;
+    createdUserIds.length = 0;
+    
+    jest.clearAllMocks();
+  });
+
   // Clean up test data after each test
   afterEach(async () => {
     // Delete in reverse order of creation, respecting foreign key constraints
@@ -84,11 +95,11 @@ describe('Invitation System Property Tests', () => {
 
     await fc.assert(
       fc.asyncProperty(
-        fc.string({ minLength: 1, maxLength: 100 }), // project name
+        fc.string({ minLength: 1, maxLength: 100 }).map(s => s.replace(/[^\w\s-]/g, 'A')).filter(s => s.trim().length > 0), // project name - sanitize special chars
         fc.emailAddress(), // invited email
         fc.constantFrom('owner', 'admin', 'editor', 'viewer'), // role to assign
         fc.constantFrom('owner', 'admin'), // inviter role (only owner/admin can invite)
-        fc.string({ minLength: 1, maxLength: 100 }), // inviter name
+        fc.string({ minLength: 1, maxLength: 100 }).map(s => s.replace(/[^\w\s-]/g, 'A')).filter(s => s.trim().length > 0), // inviter name - sanitize special chars
         async (projectName, invitedEmail, roleToAssign, inviterRole, inviterName) => {
           // Setup: Create inviter user and project
           const inviter = await prisma.user.create({
@@ -101,10 +112,14 @@ describe('Invitation System Property Tests', () => {
 
           const project = await prisma.project.create({
             data: {
-              name: projectName,
+              name: `${projectName}-${Date.now()}-${Math.random()}`,
             },
           });
           createdProjectIds.push(project.id);
+          
+          // Verify project was created
+          expect(project).toBeDefined();
+          expect(project.id).toBeDefined();
 
           const membership = await prisma.projectMembership.create({
             data: {

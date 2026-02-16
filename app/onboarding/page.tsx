@@ -7,6 +7,7 @@
 
 import { redirect } from 'next/navigation';
 import { validateSession } from '@/lib/session';
+import OnboardingForm from './OnboardingForm';
 
 export default async function OnboardingPage() {
   // Ensure user is authenticated
@@ -37,31 +38,7 @@ export default async function OnboardingPage() {
             to collaborate.
           </p>
 
-          <form action="/api/projects" method="POST" className="space-y-4">
-            <div>
-              <label
-                htmlFor="projectName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Project Name
-              </label>
-              <input
-                type="text"
-                id="projectName"
-                name="name"
-                required
-                placeholder="My Awesome Project"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Create Project
-            </button>
-          </form>
+          <OnboardingForm />
         </div>
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">

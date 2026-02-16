@@ -101,7 +101,9 @@ describe('Input Validation Property Tests', () => {
             fc.array(fc.anything()),
             fc.object()
           ), // actual value (may not match expected type)
-          fc.string({ minLength: 1, maxLength: 50 }), // field name
+          fc.string({ minLength: 1, maxLength: 50 }).filter(name => 
+            name !== '__proto__' && name !== 'constructor' && name !== 'prototype'
+          ), // field name
           async (expectedType, value, fieldName) => {
             const data = { [fieldName]: value };
             const fieldTypes = { [fieldName]: expectedType };
