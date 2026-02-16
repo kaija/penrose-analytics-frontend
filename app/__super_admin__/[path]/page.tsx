@@ -9,6 +9,10 @@ export default function SuperAdminPage() {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [memberships, setMemberships] = useState([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [projectName, setProjectName] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if the path matches the environment variable
@@ -43,6 +47,36 @@ export default function SuperAdminPage() {
       if (membershipsRes.ok) setMemberships(await membershipsRes.json());
     } catch (error) {
       console.error('Failed to load super admin data:', error);
+    }
+  };
+
+  const handleCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCreating(true);
+    setCreateError(null);
+
+    try {
+      const response = await fetch('/api/super-admin/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: projectName }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create project');
+      }
+
+      // Success! Reset form and reload data
+      setProjectName('');
+      setShowCreateForm(false);
+      loadData();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -81,11 +115,73 @@ export default function SuperAdminPage() {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Projects Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
               All Projects
             </h2>
+            {!showCreateForm && (
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+              >
+                Create Project
+              </button>
+            )}
           </div>
+
+          {/* Create Project Form */}
+          {showCreateForm && (
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+              <form onSubmit={handleCreateProject} className="max-w-md space-y-4">
+                <div>
+                  <label
+                    htmlFor="projectName"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Project Name
+                  </label>
+                  <input
+                    type="text"
+                    id="projectName"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="Enter project name"
+                    required
+                    maxLength={100}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+
+                {createError && (
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-800 dark:text-red-200">{createError}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={isCreating || !projectName.trim()}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isCreating ? 'Creating...' : 'Create'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateForm(false);
+                      setProjectName('');
+                      setCreateError(null);
+                    }}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-900">

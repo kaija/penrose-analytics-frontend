@@ -51,18 +51,26 @@ export async function GET() {
       );
     }
 
+    // Ensure user has a name (fallback to email username if not)
+    const userName = user.name || user.email.split('@')[0];
+
     // Transform projects data
     const projects = user.memberships.map((m) => m.project);
+
+    // Check if user is super admin
+    const superAdminEmails = process.env.SUPER_ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
+    const isSuperAdmin = superAdminEmails.includes(user.email);
 
     return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        name: userName,
         avatar: user.avatar,
       },
       projects,
       activeProjectId: session.activeProjectId,
+      isSuperAdmin,
     });
   } catch (error) {
     console.error('Error fetching user data:', error);

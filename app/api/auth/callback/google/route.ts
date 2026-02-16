@@ -79,18 +79,18 @@ export async function GET(request: NextRequest) {
       user = await prisma.user.create({
         data: {
           email: userInfo.email,
-          name: userInfo.name,
+          name: userInfo.name || userInfo.email.split('@')[0], // Fallback to email username if name not provided
           avatar: userInfo.picture,
         },
       });
       isNewUser = true;
     } else {
-      // Update user info if changed
+      // Update user info if changed (always update to ensure latest info)
       user = await prisma.user.update({
         where: { id: user.id },
         data: {
-          name: userInfo.name,
-          avatar: userInfo.picture,
+          name: userInfo.name || user.name || userInfo.email.split('@')[0], // Keep existing name if new name not provided
+          avatar: userInfo.picture || user.avatar,
         },
       });
     }

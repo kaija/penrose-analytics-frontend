@@ -21,9 +21,10 @@ interface Project {
 interface ProjectListProps {
   projects: Project[];
   activeProjectId: string | null;
+  isSuperAdmin: boolean;
 }
 
-export default function ProjectList({ projects, activeProjectId }: ProjectListProps) {
+export default function ProjectList({ projects, activeProjectId, isSuperAdmin }: ProjectListProps) {
   const router = useRouter();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [projectName, setProjectName] = useState('');
@@ -81,71 +82,73 @@ export default function ProjectList({ projects, activeProjectId }: ProjectListPr
 
   return (
     <div className="space-y-6">
-      {/* Create Project Button */}
-      <div>
-        {!showCreateForm ? (
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Create Project
-          </button>
-        ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Create New Project
-            </h2>
-            <form onSubmit={handleCreateProject} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="projectName"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Project Name
-                </label>
-                <input
-                  type="text"
-                  id="projectName"
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="Enter project name"
-                  required
-                  maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+      {/* Create Project Button - Only for Super Admins */}
+      {isSuperAdmin && (
+        <div>
+          {!showCreateForm ? (
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create Project
+            </button>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Create New Project
+              </h2>
+              <form onSubmit={handleCreateProject} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="projectName"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Project Name
+                  </label>
+                  <input
+                    type="text"
+                    id="projectName"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="Enter project name"
+                    required
+                    maxLength={100}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
                 </div>
-              )}
 
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  disabled={isCreating || !projectName.trim()}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isCreating ? 'Creating...' : 'Create'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setProjectName('');
-                    setError(null);
-                  }}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
+                {error && (
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={isCreating || !projectName.trim()}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isCreating ? 'Creating...' : 'Create'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateForm(false);
+                      setProjectName('');
+                      setError(null);
+                    }}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Projects List */}
       <div>
@@ -154,8 +157,11 @@ export default function ProjectList({ projects, activeProjectId }: ProjectListPr
         </h2>
         {projects.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
-            <p className="text-gray-600 dark:text-gray-400">
-              No projects yet. Create your first project to get started!
+            <p className="text-gray-600 dark:text-gray-400 mb-2">
+              You don't have access to any projects yet.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              Please contact your administrator to grant you access to a project.
             </p>
           </div>
         ) : (

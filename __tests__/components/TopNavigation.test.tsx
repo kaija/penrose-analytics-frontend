@@ -6,6 +6,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import TopNavigation from '@/components/TopNavigation';
 
+// Mock fetch API
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ isSuperAdmin: false }),
+  })
+) as jest.Mock;
+
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboards',

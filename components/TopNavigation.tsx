@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
 import ProjectSwitcher from './ProjectSwitcher';
 import { Bell } from './icons';
@@ -17,6 +18,22 @@ const navigationTabs = [
 
 export default function TopNavigation() {
   const pathname = usePathname();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkSuperAdmin() {
+      try {
+        const response = await fetch('/api/user/me');
+        if (response.ok) {
+          const data = await response.json();
+          setIsSuperAdmin(data.isSuperAdmin || false);
+        }
+      } catch (error) {
+        console.error('Error checking super admin status:', error);
+      }
+    }
+    checkSuperAdmin();
+  }, []);
 
   const isActiveTab = (href: string) => {
     return pathname?.startsWith(href);
@@ -44,6 +61,15 @@ export default function TopNavigation() {
 
         {/* Right: Actions and user menu */}
         <div className="flex items-center space-x-4">
+          {isSuperAdmin && (
+            <Link
+              href="/__super_admin__/users"
+              className="px-3 py-1.5 text-xs font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors"
+            >
+              Super Admin
+            </Link>
+          )}
+          
           <button className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-md transition-colors">
             <Bell className="w-5 h-5" />
           </button>

@@ -17,6 +17,7 @@ interface UserData {
   };
   projects: Project[];
   activeProjectId: string | null;
+  isSuperAdmin: boolean;
 }
 
 export default function ProjectSwitcher() {
@@ -45,8 +46,8 @@ export default function ProjectSwitcher() {
   }, []);
 
   const currentUser = userData?.user || {
-    name: 'Loading...',
-    email: '',
+    name: isLoading ? 'Loading...' : 'User',
+    email: isLoading ? '' : 'No email',
     avatar: null,
   };
 

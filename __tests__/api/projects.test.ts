@@ -18,6 +18,9 @@ import { prisma } from '@/lib/prisma';
 jest.mock('@/lib/session');
 jest.mock('@/lib/prisma', () => ({
   prisma: {
+    user: {
+      findUnique: jest.fn(),
+    },
     project: {
       create: jest.fn(),
       findUnique: jest.fn(),
@@ -38,12 +41,21 @@ describe('Project API Routes', () => {
   });
 
   describe('POST /api/projects - Create Project', () => {
-    it('should create a project and assign creator as owner', async () => {
+    it('should create a project and assign creator as owner (super admin)', async () => {
       // Mock session
       (validateSession as jest.Mock).mockResolvedValue({
         userId: 'user-123',
         activeProjectId: null,
       });
+
+      // Mock super admin user
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'user-123',
+        email: 'admin@example.com',
+      });
+
+      // Set super admin email in env
+      process.env.SUPER_ADMIN_EMAILS = 'admin@example.com';
 
       // Mock transaction
       const mockProject = {
@@ -108,12 +120,52 @@ describe('Project API Routes', () => {
       expect(data.error.code).toBe('AuthenticationError');
     });
 
+    it('should return 403 if not super admin', async () => {
+      // Mock session
+      (validateSession as jest.Mock).mockResolvedValue({
+        userId: 'user-123',
+        activeProjectId: null,
+      });
+
+      // Mock non-super admin user
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'user-123',
+        email: 'user@example.com',
+      });
+
+      // Set super admin email in env (different from user)
+      process.env.SUPER_ADMIN_EMAILS = 'admin@example.com';
+
+      // Create request
+      const request = new NextRequest('http://localhost/api/projects', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'Test Project' }),
+      });
+
+      // Execute
+      const response = await createProject(request);
+      const data = await response.json();
+
+      // Verify
+      expect(response.status).toBe(403);
+      expect(data.error.code).toBe('AuthorizationError');
+    });
+
     it('should return 400 if name is missing', async () => {
       // Mock session
       (validateSession as jest.Mock).mockResolvedValue({
         userId: 'user-123',
         activeProjectId: null,
       });
+
+      // Mock super admin user
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'user-123',
+        email: 'admin@example.com',
+      });
+
+      // Set super admin email in env
+      process.env.SUPER_ADMIN_EMAILS = 'admin@example.com';
 
       // Create request without name
       const request = new NextRequest('http://localhost/api/projects', {
@@ -136,6 +188,15 @@ describe('Project API Routes', () => {
         userId: 'user-123',
         activeProjectId: null,
       });
+
+      // Mock super admin user
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        id: 'user-123',
+        email: 'admin@example.com',
+      });
+
+      // Set super admin email in env
+      process.env.SUPER_ADMIN_EMAILS = 'admin@example.com';
 
       // Create request with long name
       const longName = 'a'.repeat(101);
