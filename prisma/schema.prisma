@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  memberships ProjectMembership[]
+  auditLogs   AuditLog[]
+}
+
+// Project model
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  memberships ProjectMembership[]
+  invitations Invitation[]
+  dashboards  Dashboard[]
+  reports     Report[]
+  profiles    Profile[]
+  events      Event[]
+  auditLogs   AuditLog[]
+}
+
+// ProjectMembership model
+model ProjectMembership {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, projectId])
+  @@index([userId])
+  @@index([projectId])
+}
+
+// Invitation model
+model Invitation {
+  id           String    @id @default(cuid())
+  token        String    @unique
+  projectId    String
+  invitedEmail String
+  role         Role
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([projectId])
+  @@index([invitedEmail])
+}
+
+// Dashboard model
+model Dashboard {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  widgets Widget[]
+  
+  @@index([projectId])
+}
+
+// Widget model
+model Widget {
+  id          String   @id @default(cuid())
+  dashboardId String
+  type        String
+  title       String
+  config      Json
+  position    Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  
+  @@index([dashboardId])
+}
+
+// Report model
+model Report {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  category  String
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+  @@index([category])
+}
+
+// Profile model
+model Profile {
+  id         String   @id @default(cuid())
+  projectId  String
+  externalId String
+  traits     Json
+  identities Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  events  Event[]
+  
+  @@unique([projectId, externalId])
+  @@index([projectId])
+  @@index([externalId])
+}
+
+// Event model
+model Event {
+  id        String   @id @default(cuid())
+  projectId String
+  profileId String
+  eventName String
+  payload   Json
+  timestamp DateTime
+  createdAt DateTime @default(now())
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+  @@index([profileId])
+  @@index([eventName])
+  @@index([timestamp])
+}
+
+// AuditLog model
+model AuditLog {
+  id        String   @id @default(cuid())
+  projectId String?
+  userId    String
+  action    String
+  details   Json
+  timestamp DateTime @default(now())
+  
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+// Enum for roles
+enum Role {
+  owner
+  admin
+  editor
+  viewer
+}

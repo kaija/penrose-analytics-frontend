@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prism-cdp
+  labels:
+    app: prism-cdp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: prism-cdp
+  template:
+    metadata:
+      labels:
+        app: prism-cdp
+    spec:
+      containers:
+      - name: prism-cdp
+        image: prism-cdp:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: database-url
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: google-client-id
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: google-client-secret
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: session-secret
+        - name: SUPER_ADMIN_PATH
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: super-admin-path
+        - name: SUPER_ADMIN_EMAILS
+          valueFrom:
+            configMapKeyRef:
+              name: prism-config
+              key: super-admin-emails
+        - name: APP_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: prism-config
+              key: app-base-url
+        - name: SMTP_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: prism-config
+              key: smtp-host
+        - name: SMTP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: prism-config
+              key: smtp-port
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: smtp-user
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: prism-secrets
+              key: smtp-password
+        - name: SMTP_FROM
+          valueFrom:
+            configMapKeyRef:
+              name: prism-config
+              key: smtp-from
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prism-cdp
+  labels:
+    app: prism-cdp
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: prism-cdp
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prism-config
+data:
+  app-base-url: "https://prism.example.com"
+  super-admin-emails: "admin@example.com"
+  smtp-host: "smtp.example.com"
+  smtp-port: "587"
+  smtp-from: "noreply@example.com"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prism-secrets
+type: Opaque
+stringData:
+  database-url: "postgresql://user:password@postgres:5432/prism"
+  google-client-id: "your-google-client-id"
+  google-client-secret: "your-google-client-secret"
+  session-secret: "your-session-secret-min-32-chars"
+  super-admin-path: "your-secret-path"
+  smtp-user: "your-smtp-user"
+  smtp-password: "your-smtp-password"
