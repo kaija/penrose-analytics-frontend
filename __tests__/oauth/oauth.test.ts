@@ -5,6 +5,11 @@
  * Requirements: 2.1, 2.2
  */
 
+// Set up environment variables for testing
+process.env.GOOGLE_CLIENT_ID = 'test-client-id';
+process.env.GOOGLE_CLIENT_SECRET = 'test-client-secret';
+process.env.APP_BASE_URL = 'http://localhost:3000';
+
 import {
   GOOGLE_OAUTH_CONFIG,
   getGoogleAuthorizationUrl,

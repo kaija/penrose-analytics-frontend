@@ -9,16 +9,16 @@
  * Requirements: 2.1
  */
 
-import { render, screen } from '@testing-library/react';
-import LoginPage from '@/app/login/page';
-import { validateSession } from '@/lib/session';
-import { redirect } from 'next/navigation';
-
-// Mock dependencies
+// Mock dependencies BEFORE imports
 jest.mock('@/lib/session');
 jest.mock('next/navigation', () => ({
   redirect: jest.fn(),
 }));
+
+import { render, screen } from '@testing-library/react';
+import LoginPage from '@/app/login/page';
+import { validateSession } from '@/lib/session';
+import { redirect } from 'next/navigation';
 
 describe('Login Page', () => {
   beforeEach(() => {

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import MainLayout from '@/components/MainLayout';
 
@@ -9,6 +10,13 @@ import MainLayout from '@/components/MainLayout';
 jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboards',
 }));
+
+// Mock ProjectSwitcher component
+jest.mock('@/components/ProjectSwitcher', () => {
+  return function MockProjectSwitcher() {
+    return <div data-testid="project-switcher">Project Switcher</div>;
+  };
+});
 
 // Mock localStorage
 const localStorageMock = {
@@ -50,14 +58,14 @@ describe('MainLayout', () => {
     expect(screen.getByText('Configure')).toBeInTheDocument();
   });
 
-  it('renders Start Free Trial button', () => {
+  it('does not render Start Free Trial button', () => {
     render(
       <MainLayout>
         <div>Test Content</div>
       </MainLayout>
     );
 
-    expect(screen.getByText('Start Free Trial')).toBeInTheDocument();
+    expect(screen.queryByText('Start Free Trial')).not.toBeInTheDocument();
   });
 
   it('renders left sidebar when provided', () => {

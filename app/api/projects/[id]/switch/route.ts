@@ -8,7 +8,7 @@
 
 import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
-import { validateSession } from '@/lib/session';
+import { validateSession, updateActiveProject } from '@/lib/session';
 import { switchProject } from '@/lib/project';
 import { 
   AuthenticationError,
@@ -38,11 +38,14 @@ export const POST = withErrorHandler(async (
     throw new NotFoundError('Project');
   }
 
-  // Switch to the project
+  // Switch to the project (validates access)
   await switchProject(session.userId, projectId);
+  
+  // Update session with new active project
+  await updateActiveProject(projectId);
 
   return successResponse({ 
     message: 'Project switched successfully',
-    projectId 
+    activeProjectId: projectId 
   });
 });

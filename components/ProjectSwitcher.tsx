@@ -8,25 +8,50 @@ interface Project {
   name: string;
 }
 
+interface UserData {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    avatar: string | null;
+  };
+  projects: Project[];
+  activeProjectId: string | null;
+}
+
 export default function ProjectSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mock data - will be replaced with real data from API
-  const currentUser = {
-    name: 'John Doe',
-    email: 'john@example.com',
+  // Fetch user data on mount
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const response = await fetch('/api/user/me');
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchUserData();
+  }, []);
+
+  const currentUser = userData?.user || {
+    name: 'Loading...',
+    email: '',
     avatar: null,
   };
 
-  const projects: Project[] = [
-    { id: '1', name: 'Project Alpha' },
-    { id: '2', name: 'Project Beta' },
-    { id: '3', name: 'Project Gamma' },
-  ];
-
-  const activeProjectId = '1';
+  const projects = userData?.projects || [];
+  const activeProjectId = userData?.activeProjectId;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -53,18 +78,25 @@ export default function ProjectSwitcher() {
     window.location.href = '/api/auth/logout';
   };
 
+  const activeProject = projects.find((p) => p.id === activeProjectId);
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-md transition-colors"
+        className="flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-md transition-colors"
       >
+        <div className="flex flex-col items-end">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {currentUser.name}
+          </span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {activeProject?.name || 'No Project'}
+          </span>
+        </div>
         <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-sm font-medium">
           {currentUser.name.charAt(0)}
         </div>
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {currentUser.name}
-        </span>
         <ChevronDown className="w-4 h-4 text-gray-500" />
       </button>
 
@@ -93,7 +125,7 @@ export default function ProjectSwitcher() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search organizations and projects"
+                placeholder="Search projects"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -101,27 +133,34 @@ export default function ProjectSwitcher() {
             </div>
           </div>
 
-          {/* Organization and Projects list */}
+          {/* Projects list */}
           <div className="max-h-64 overflow-y-auto">
             <div className="p-2">
-              {/* Organization section (placeholder) */}
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 px-3 py-2">
-                ORGANIZATION
-              </div>
-              <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 italic">
-                No organization
-              </div>
-              
               {/* Projects section */}
-              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 px-3 py-2 mt-2">
+              <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 px-3 py-2">
                 PROJECTS
               </div>
               {filteredProjects.map((project) => (
                 <button
                   key={project.id}
-                  onClick={() => {
-                    // Will be implemented with actual project switching logic
-                    console.log('Switch to project:', project.id);
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`/api/projects/${project.id}/switch`, {
+                        method: 'POST',
+                      });
+                      if (response.ok) {
+                        // Refresh user data to get updated activeProjectId
+                        const userResponse = await fetch('/api/user/me');
+                        if (userResponse.ok) {
+                          const data = await userResponse.json();
+                          setUserData(data);
+                        }
+                        // Reload the page to reflect the new active project
+                        window.location.reload();
+                      }
+                    } catch (error) {
+                      console.error('Error switching project:', error);
+                    }
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
@@ -140,8 +179,8 @@ export default function ProjectSwitcher() {
           <div className="p-2 border-t border-gray-200 dark:border-gray-800">
             <button
               onClick={() => {
-                // Will be implemented with actual add project logic
-                console.log('Add project');
+                // Navigate to projects page to add a new project
+                window.location.href = '/projects';
                 setIsOpen(false);
               }}
               className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"

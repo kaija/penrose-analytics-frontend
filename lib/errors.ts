@@ -131,7 +131,8 @@ export interface FieldError {
  * Requirements: 19.1
  */
 export function createValidationError(fields: FieldError[]): ValidationError {
-  const fieldMap: Record<string, string> = {};
+  // Use Object.create(null) to avoid prototype pollution issues
+  const fieldMap: Record<string, string> = Object.create(null);
   fields.forEach(({ field, message }) => {
     fieldMap[field] = message;
   });
