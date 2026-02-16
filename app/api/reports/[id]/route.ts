@@ -27,7 +27,7 @@ import {
  */
 export const PUT = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -36,7 +36,8 @@ export const PUT = withErrorHandler(async (
   }
 
   // Get report ID from params
-  const reportId = context?.params?.id;
+  const params = await context?.params;
+  const reportId = params?.id;
   if (!reportId) {
     throw new NotFoundError('Report');
   }
@@ -85,7 +86,7 @@ export const PUT = withErrorHandler(async (
  */
 export const DELETE = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -94,7 +95,8 @@ export const DELETE = withErrorHandler(async (
   }
 
   // Get report ID from params
-  const reportId = context?.params?.id;
+  const params = await context?.params;
+  const reportId = params?.id;
   if (!reportId) {
     throw new NotFoundError('Report');
   }

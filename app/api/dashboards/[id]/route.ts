@@ -27,7 +27,7 @@ import {
  */
 export const PUT = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -36,7 +36,8 @@ export const PUT = withErrorHandler(async (
   }
 
   // Get dashboard ID from params
-  const dashboardId = context?.params?.id;
+  const params = await context?.params;
+  const dashboardId = params?.id;
   if (!dashboardId) {
     throw new NotFoundError('Dashboard');
   }
@@ -77,7 +78,7 @@ export const PUT = withErrorHandler(async (
  */
 export const DELETE = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -86,7 +87,8 @@ export const DELETE = withErrorHandler(async (
   }
 
   // Get dashboard ID from params
-  const dashboardId = context?.params?.id;
+  const params = await context?.params;
+  const dashboardId = params?.id;
   if (!dashboardId) {
     throw new NotFoundError('Dashboard');
   }

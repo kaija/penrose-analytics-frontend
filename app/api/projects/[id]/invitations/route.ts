@@ -35,7 +35,7 @@ import { Role } from '@prisma/client';
  */
 export const GET = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -44,7 +44,8 @@ export const GET = withErrorHandler(async (
   }
 
   // Get project ID from params
-  const projectId = context?.params?.id;
+  const params = await context?.params;
+  const projectId = params?.id;
   if (!projectId) {
     throw new NotFoundError('Project');
   }
@@ -87,7 +88,7 @@ export const GET = withErrorHandler(async (
  */
 export const POST = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -96,7 +97,8 @@ export const POST = withErrorHandler(async (
   }
 
   // Get project ID from params
-  const projectId = context?.params?.id;
+  const params = await context?.params;
+  const projectId = params?.id;
   if (!projectId) {
     throw new NotFoundError('Project');
   }

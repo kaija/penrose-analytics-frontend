@@ -25,7 +25,7 @@ import {
  */
 export const GET = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -34,7 +34,8 @@ export const GET = withErrorHandler(async (
   }
 
   // Get event ID from params
-  const eventId = context?.params?.id;
+  const params = await context?.params;
+  const eventId = params?.id;
   if (!eventId) {
     throw new NotFoundError('Event');
   }

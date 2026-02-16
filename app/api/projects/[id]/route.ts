@@ -27,7 +27,7 @@ import { prisma } from '@/lib/prisma';
  */
 export const PUT = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -36,7 +36,8 @@ export const PUT = withErrorHandler(async (
   }
 
   // Get project ID from params
-  const projectId = context?.params?.id;
+  const params = await context?.params;
+  const projectId = params?.id;
   if (!projectId) {
     throw new NotFoundError('Project');
   }

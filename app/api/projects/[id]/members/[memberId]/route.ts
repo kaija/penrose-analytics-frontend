@@ -27,7 +27,7 @@ import { Role } from '@prisma/client';
  */
 export const PUT = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -36,7 +36,8 @@ export const PUT = withErrorHandler(async (
   }
 
   // Get member ID from params
-  const memberId = context?.params?.memberId;
+  const params = await context?.params;
+  const memberId = params?.memberId;
   if (!memberId) {
     throw new NotFoundError('Membership');
   }
@@ -68,7 +69,7 @@ export const PUT = withErrorHandler(async (
  */
 export const DELETE = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -77,7 +78,8 @@ export const DELETE = withErrorHandler(async (
   }
 
   // Get member ID from params
-  const memberId = context?.params?.memberId;
+  const params = await context?.params;
+  const memberId = params?.memberId;
   if (!memberId) {
     throw new NotFoundError('Membership');
   }

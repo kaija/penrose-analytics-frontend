@@ -15,7 +15,7 @@ import { formatErrorResponse, logError, AppError } from './errors';
  */
 export type ApiHandler = (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => Promise<NextResponse>;
 
 /**
@@ -34,7 +34,7 @@ export function withErrorHandler(
   handler: ApiHandler,
   options: { isAdminRoute?: boolean } = {}
 ): ApiHandler {
-  return async (request: NextRequest, context?: { params: Record<string, string> }) => {
+  return async (request: NextRequest, context?: { params: Promise<Record<string, string>> }) => {
     try {
       return await handler(request, context);
     } catch (error) {

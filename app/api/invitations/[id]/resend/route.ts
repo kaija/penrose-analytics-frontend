@@ -27,7 +27,7 @@ import { prisma } from '@/lib/prisma';
  */
 export const POST = withErrorHandler(async (
   request: NextRequest,
-  context?: { params: Record<string, string> }
+  context?: { params: Promise<Record<string, string>> }
 ) => {
   // Validate session
   const session = await validateSession();
@@ -36,7 +36,8 @@ export const POST = withErrorHandler(async (
   }
 
   // Get invitation ID from params
-  const invitationId = context?.params?.id;
+  const params = await context?.params;
+  const invitationId = params?.id;
   if (!invitationId) {
     throw new NotFoundError('Invitation');
   }
