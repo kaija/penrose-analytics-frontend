@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Property-Based Tests for Theme Persistence
  * 
  * Feature: prism

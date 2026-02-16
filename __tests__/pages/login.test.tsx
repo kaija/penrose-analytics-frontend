@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Login Page Tests
  * Tests for the login page component
  * 

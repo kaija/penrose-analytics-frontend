@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Onboarding Page Tests
  * 
  * Tests the first-time user onboarding flow
