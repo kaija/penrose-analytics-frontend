@@ -77,6 +77,106 @@ interface SessionData {
 - `destroySession()` - Destroy session and clear cookies
 - `updateActiveProject(projectId)` - Update active project in session
 
+## Project Management
+
+Project management functionality handles project creation, access control, and user-project relationships.
+
+See `lib/project.ts` for implementation details.
+
+### Functions
+
+- `createProject(userId, name)` - Create new project and assign creator as owner
+- `getUserProjects(userId)` - Get all projects for a user
+- `switchProject(userId, projectId)` - Validate access for project switching
+- `hasProjectAccess(userId, projectId)` - Check if user has access to project
+- `getUserRole(userId, projectId)` - Get user's role in a project
+
+### Key Features
+
+- **Transactional Creation**: Projects and owner memberships are created atomically
+- **Access Control**: All operations validate user access before proceeding
+- **Role Management**: Supports owner, admin, editor, and viewer roles
+- **Multi-Project Support**: Users can be members of multiple projects with different roles
+
+### Testing
+
+Project management is tested in:
+- `__tests__/project/project.test.ts` - Unit tests for specific scenarios
+- `__tests__/project/project.property.test.ts` - Property-based tests for correctness
+
+## Email Delivery
+
+Email delivery is implemented using nodemailer with SMTP configuration and automatic retry logic.
+
+See `lib/email.ts` for implementation details.
+
+### Configuration
+
+SMTP configuration is managed through environment variables:
+
+```env
+SMTP_HOST="smtp.example.com"
+SMTP_PORT="587"
+SMTP_USER="your-smtp-user"
+SMTP_PASSWORD="your-smtp-password"
+SMTP_FROM="noreply@example.com"
+```
+
+### Functions
+
+- `sendEmail(options)` - Send an email with automatic retry logic
+- `verifyEmailConnection()` - Verify SMTP connection configuration
+
+### Retry Logic
+
+The email system implements automatic retry logic for failed deliveries:
+
+- **Max Retries**: 3 attempts
+- **Retry Delays**: 1 minute, 5 minutes, 15 minutes (exponential backoff)
+- **Logging**: All failures and retries are logged for monitoring
+- **Permanent Failure**: After 3 failed attempts, the email is marked as permanently failed
+
+### Email Options
+
+```typescript
+interface EmailOptions {
+  to: string;        // Recipient email address
+  subject: string;   // Email subject line
+  text: string;      // Plain text email body
+  html?: string;     // Optional HTML email body
+}
+```
+
+### Usage Example
+
+```typescript
+import { sendEmail } from '@/lib/email';
+
+const result = await sendEmail({
+  to: 'user@example.com',
+  subject: 'Welcome to Prism',
+  text: 'Welcome to our platform!',
+  html: '<p>Welcome to our platform!</p>',
+});
+
+if (result.success) {
+  console.log('Email sent:', result.messageId);
+} else {
+  console.error('Email failed:', result.error);
+}
+```
+
+### Security Features
+
+- **Environment-based Configuration**: All credentials stored in environment variables
+- **Connection Pooling**: Reuses transporter instance for efficiency
+- **Error Handling**: Comprehensive error logging without exposing sensitive details
+- **Secure Transport**: Supports TLS/SSL for secure email delivery
+
+### Testing
+
+Email delivery will be tested in `__tests__/email/email.test.ts`.
+
 ## Database
 
 Database access is managed through Prisma ORM.
