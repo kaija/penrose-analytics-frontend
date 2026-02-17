@@ -38,6 +38,7 @@ model Project {
   profiles    Profile[]
   events      Event[]
   auditLogs   AuditLog[]
+  idHierarchy IdHierarchy[]
 }
 
 // ProjectMembership model
@@ -174,6 +175,23 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([timestamp])
+}
+
+// IdHierarchy model
+model IdHierarchy {
+  id          String   @id @default(cuid())
+  projectId   String
+  displayName String
+  codeName    String
+  priority    Int
+  isCustom    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectId, codeName])
+  @@index([projectId])
 }
 
 // Enum for roles

@@ -2,48 +2,18 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Search, Plus, LogOut } from './icons';
+import { useUser } from '@/contexts/UserContext';
 
 interface Project {
   id: string;
   name: string;
 }
 
-interface UserData {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    avatar: string | null;
-  };
-  projects: Project[];
-  activeProjectId: string | null;
-  isSuperAdmin: boolean;
-}
-
 export default function ProjectSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { userData, isLoading, refreshUserData } = useUser();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Fetch user data on mount
-  useEffect(() => {
-    async function fetchUserData() {
-      try {
-        const response = await fetch('/api/user/me');
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchUserData();
-  }, []);
 
   const currentUser = userData?.user || {
     name: isLoading ? 'Loading...' : 'User',
@@ -151,11 +121,7 @@ export default function ProjectSwitcher() {
                       });
                       if (response.ok) {
                         // Refresh user data to get updated activeProjectId
-                        const userResponse = await fetch('/api/user/me');
-                        if (userResponse.ok) {
-                          const data = await userResponse.json();
-                          setUserData(data);
-                        }
+                        await refreshUserData();
                         // Reload the page to reflect the new active project
                         window.location.reload();
                       }
@@ -178,17 +144,19 @@ export default function ProjectSwitcher() {
 
           {/* Actions */}
           <div className="p-2 border-t border-gray-200 dark:border-gray-800">
-            <button
-              onClick={() => {
-                // Navigate to projects page to add a new project
-                window.location.href = '/projects';
-                setIsOpen(false);
-              }}
-              className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Project</span>
-            </button>
+            {userData?.isSuperAdmin && (
+              <button
+                onClick={() => {
+                  // Navigate to projects page to add a new project
+                  window.location.href = '/projects';
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Project</span>
+              </button>
+            )}
             <button
               onClick={handleSignOut}
               className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"

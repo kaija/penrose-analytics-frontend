@@ -6,30 +6,58 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProjectSwitcher from '@/components/ProjectSwitcher';
 
+// Mock UserContext with dynamic data
+let mockUserData = {
+  user: {
+    id: 'user-1',
+    email: 'john@example.com',
+    name: 'John Doe',
+    avatar: null,
+  },
+  projects: [
+    { id: '1', name: 'Project Alpha' },
+    { id: '2', name: 'Project Beta' },
+    { id: '3', name: 'Project Gamma' },
+  ],
+  activeProjectId: '1',
+  isSuperAdmin: false,
+};
+
+const mockRefreshUserData = jest.fn();
+
+jest.mock('@/contexts/UserContext', () => ({
+  useUser: () => ({
+    userData: mockUserData,
+    isLoading: false,
+    refreshUserData: mockRefreshUserData,
+  }),
+}));
+
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('ProjectSwitcher', () => {
-  const mockUserData = {
-    user: {
-      id: 'user-1',
-      email: 'john@example.com',
-      name: 'John Doe',
-      avatar: null,
-    },
-    projects: [
-      { id: '1', name: 'Project Alpha' },
-      { id: '2', name: 'Project Beta' },
-      { id: '3', name: 'Project Gamma' },
-    ],
-    activeProjectId: '1',
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
+    // Reset to default non-super-admin user
+    mockUserData = {
+      user: {
+        id: 'user-1',
+        email: 'john@example.com',
+        name: 'John Doe',
+        avatar: null,
+      },
+      projects: [
+        { id: '1', name: 'Project Alpha' },
+        { id: '2', name: 'Project Beta' },
+        { id: '3', name: 'Project Gamma' },
+      ],
+      activeProjectId: '1',
+      isSuperAdmin: false,
+    };
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => mockUserData,
+      json: async () => ({ success: true }),
     });
   });
 
@@ -229,7 +257,9 @@ describe('ProjectSwitcher', () => {
   });
 
   describe('Requirement 3.10: Add Project button', () => {
-    it('displays Add Project button', async () => {
+    it('displays Add Project button for super admin', async () => {
+      mockUserData.isSuperAdmin = true;
+      
       render(<ProjectSwitcher />);
       
       await waitFor(() => {
@@ -243,7 +273,24 @@ describe('ProjectSwitcher', () => {
       expect(addButton).toBeInTheDocument();
     });
 
-    it('Add Project button has Plus icon', async () => {
+    it('does not display Add Project button for non-super admin', async () => {
+      mockUserData.isSuperAdmin = false;
+      
+      render(<ProjectSwitcher />);
+      
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+      
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+      
+      expect(screen.queryByText('Add Project')).not.toBeInTheDocument();
+    });
+
+    it('Add Project button has Plus icon for super admin', async () => {
+      mockUserData.isSuperAdmin = true;
+      
       render(<ProjectSwitcher />);
       
       await waitFor(() => {

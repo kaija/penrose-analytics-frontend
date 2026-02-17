@@ -2,38 +2,32 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
 import ProjectSwitcher from './ProjectSwitcher';
-import { Bell } from './icons';
+import { useUser } from '@/contexts/UserContext';
+import { 
+  Bell, 
+  LayoutDashboard, 
+  Activity, 
+  Users, 
+  BarChart, 
+  Zap, 
+  Settings 
+} from './icons';
 
 const navigationTabs = [
-  { name: 'Dashboards', href: '/dashboards' },
-  { name: 'Activity', href: '/activity' },
-  { name: 'Profiles', href: '/profiles' },
-  { name: 'Analyze', href: '/analyze' },
-  { name: 'Automate', href: '/automate' },
-  { name: 'Configure', href: '/configure' },
+  { name: 'Dashboards', href: '/dashboards', icon: LayoutDashboard },
+  { name: 'Activity', href: '/activity', icon: Activity },
+  { name: 'Profiles', href: '/profiles', icon: Users },
+  { name: 'Analyze', href: '/analyze', icon: BarChart },
+  { name: 'Automate', href: '/automate', icon: Zap },
+  { name: 'Configure', href: '/configure', icon: Settings },
 ];
 
 export default function TopNavigation() {
   const pathname = usePathname();
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-
-  useEffect(() => {
-    async function checkSuperAdmin() {
-      try {
-        const response = await fetch('/api/user/me');
-        if (response.ok) {
-          const data = await response.json();
-          setIsSuperAdmin(data.isSuperAdmin || false);
-        }
-      } catch (error) {
-        console.error('Error checking super admin status:', error);
-      }
-    }
-    checkSuperAdmin();
-  }, []);
+  const { userData } = useUser();
+  const isSuperAdmin = userData?.isSuperAdmin || false;
 
   const isActiveTab = (href: string) => {
     return pathname?.startsWith(href);
@@ -44,19 +38,23 @@ export default function TopNavigation() {
       <div className="h-full flex items-center justify-between px-6">
         {/* Left: Navigation tabs */}
         <div className="flex items-center space-x-1">
-          {navigationTabs.map((tab) => (
-            <Link
-              key={tab.name}
-              href={tab.href}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActiveTab(tab.href)
-                  ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900'
-              }`}
-            >
-              {tab.name}
-            </Link>
-          ))}
+          {navigationTabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <Link
+                key={tab.name}
+                href={tab.href}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActiveTab(tab.href)
+                    ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.name}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right: Actions and user menu */}

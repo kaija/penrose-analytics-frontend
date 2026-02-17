@@ -6,13 +6,25 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import MainLayout from '@/components/MainLayout';
 
-// Mock fetch API
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({ isSuperAdmin: false }),
-  })
-) as jest.Mock;
+// Mock UserContext
+jest.mock('@/contexts/UserContext', () => ({
+  UserProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useUser: () => ({
+    userData: {
+      user: {
+        id: '1',
+        email: 'test@example.com',
+        name: 'Test User',
+        avatar: null,
+      },
+      projects: [],
+      activeProjectId: null,
+      isSuperAdmin: false,
+    },
+    isLoading: false,
+    refreshUserData: jest.fn(),
+  }),
+}));
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

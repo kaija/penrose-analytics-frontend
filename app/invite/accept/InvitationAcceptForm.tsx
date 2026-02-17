@@ -43,11 +43,21 @@ export default function InvitationAcceptForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to accept invitation');
+        const errorMessage = data.error?.message || data.error || 'Failed to accept invitation';
+        throw new Error(errorMessage);
       }
 
-      // Success! Redirect to the project
-      router.push(`/?project=${data.data.project.id}`);
+      // Switch to the new project
+      const switchResponse = await fetch(`/api/projects/${data.data.project.id}/switch`, {
+        method: 'POST',
+      });
+
+      if (!switchResponse.ok) {
+        throw new Error('Failed to switch to project');
+      }
+
+      // Success! Redirect to home
+      router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setIsSubmitting(false);

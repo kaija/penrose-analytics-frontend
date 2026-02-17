@@ -80,7 +80,8 @@ export default function InvitationModal({ projectId, onClose }: InvitationModalP
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send invitation');
+        const errorMessage = data.error?.message || data.error || 'Failed to send invitation';
+        throw new Error(errorMessage);
       }
 
       // Success!
@@ -113,7 +114,8 @@ export default function InvitationModal({ projectId, onClose }: InvitationModalP
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to resend invitation');
+        const errorMessage = data.error?.message || data.error || 'Failed to resend invitation';
+        throw new Error(errorMessage);
       }
 
       setSuccess('Invitation resent successfully');
