@@ -341,27 +341,41 @@ export default function IdHierarchyClient({ projectId, userRole }: IdHierarchyCl
               No IDs configured. {canEdit && 'Add from available options on the right.'}
             </div>
           ) : (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={activeItems.map((item) => item.id)}
-                strategy={verticalListSortingStrategy}
+            <div className="border-2 border-gray-300 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/50">
+              {/* Higher Priority Label */}
+              <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex-shrink-0 w-1 h-4 bg-green-500 rounded"></div>
+                <span className="font-medium">Higher Priority</span>
+              </div>
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <div className="space-y-2">
-                  {activeItems.map((item) => (
-                    <SortableItem 
-                      key={item.id} 
-                      item={item} 
-                      onDelete={deleteIdentity}
-                      canEdit={canEdit}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
+                <SortableContext
+                  items={activeItems.map((item) => item.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-2">
+                    {activeItems.map((item) => (
+                      <SortableItem 
+                        key={item.id} 
+                        item={item} 
+                        onDelete={deleteIdentity}
+                        canEdit={canEdit}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+
+              {/* Lower Priority Label */}
+              <div className="flex items-center gap-2 mt-3 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex-shrink-0 w-1 h-4 bg-gray-400 rounded"></div>
+                <span className="font-medium">Lower Priority</span>
+              </div>
+            </div>
           )}
         </div>
 
