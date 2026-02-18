@@ -41,7 +41,7 @@ model Project {
   idHierarchy    IdHierarchy[]
   segments       Segment[]
   eventSchemas   EventSchema[]
-  profileSchemas ProfileSchema[]
+  userSchemas    UserSchema[]
 }
 
 // ProjectMembership model
@@ -231,23 +231,39 @@ model EventSchema {
   @@index([projectId])
 }
 
-// ProfileSchema model
-model ProfileSchema {
-  id              String   @id @default(cuid())
-  projectId       String
-  field           String
-  displayName     String
-  dataType        String   // SchemaDataType
-  icon            String?
-  category        String?
-  suggestedValues Json?    // string[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+// UserSchema model - Computed fields based on properties
+model UserSchema {
+  id          String   @id @default(cuid())
+  projectId   String
+  field       String   // The computed field name
+  displayName String
+  description String?
+  schemaType  UserSchemaType // aggregate or formula
+  
+  // For aggregate type
+  aggregateConfig Json?  // AggregateSchemaConfig
+  
+  // For formula type
+  formula     String?
+  
+  dataType    String   // SchemaDataType: string, number, boolean, date, duration
+  format      String?  // e.g., "Human Readable" for duration
+  icon        String?
+  category    String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, field])
   @@index([projectId])
+}
+
+// Enum for user schema types
+enum UserSchemaType {
+  aggregate  // Type 1: Aggregate operations (Count, Sum, Mean, etc.)
+  formula    // Type 2: Custom DSL formula
 }
 
 // Enum for roles
