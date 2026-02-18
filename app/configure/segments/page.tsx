@@ -1,10 +1,16 @@
-import PlaceholderPage from '../PlaceholderPage';
+import { redirect } from 'next/navigation';
+import { validateSession } from '@/lib/session';
+import SegmentsClient from './SegmentsClient';
 
-export default function SegmentsPage() {
-  return (
-    <PlaceholderPage
-      title="Segments"
-      description="User segmentation tools will be available here."
-    />
-  );
+export default async function SegmentsPage() {
+  const session = await validateSession();
+  if (!session) {
+    redirect('/login');
+  }
+
+  if (!session.activeProjectId) {
+    redirect('/projects');
+  }
+
+  return <SegmentsClient projectId={session.activeProjectId} />;
 }

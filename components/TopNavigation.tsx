@@ -62,7 +62,7 @@ export default function TopNavigation() {
           {isSuperAdmin && (
             <Link
               href="/__super_admin__/users"
-              className="px-3 py-1.5 text-xs font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors"
+              className="px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
             >
               Super Admin
             </Link>

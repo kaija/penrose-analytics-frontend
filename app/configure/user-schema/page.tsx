@@ -1,10 +1,10 @@
-import PlaceholderPage from '../PlaceholderPage';
+import { redirect } from 'next/navigation';
+import { validateSession } from '@/lib/session';
+import UserSchemaClient from './UserSchemaClient';
 
-export default function UserSchemaPage() {
-  return (
-    <PlaceholderPage
-      title="User Schema"
-      description="User profile schema configuration will be available here."
-    />
-  );
+export default async function UserSchemaPage() {
+  const session = await validateSession();
+  if (!session) redirect('/login');
+  if (!session.activeProjectId) redirect('/projects');
+  return <UserSchemaClient projectId={session.activeProjectId} />;
 }

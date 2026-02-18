@@ -243,8 +243,8 @@ export default function ProfilesPage() {
                         key={colId}
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
                           isPM
-                            ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
-                            : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                         }`}
                       >
                         {col.label}
@@ -329,7 +329,7 @@ export default function ProfilesPage() {
                       onClick={() => col.sortable && handleSort(col.id)}
                     >
                       <span className="inline-flex items-center gap-1">
-                        {col.type === 'people_metric' && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
+                        {col.type === 'people_metric' && <span className="w-2 h-2 rounded-full bg-gray-500 inline-block" />}
                         {col.label}
                         {col.sortable && (
                           sortColumn === col.id
@@ -434,7 +434,7 @@ function ProfileRow({ row, columns }: { row: ProfileTableRow; columns: ProfileTa
 function PlanBadge({ plan }: { plan: string }) {
   const colors: Record<string, string> = {
     Enterprise: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
-    Pro: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    Pro: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
     Free: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
   };
   return (

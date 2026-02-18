@@ -31,14 +31,17 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  memberships ProjectMembership[]
-  invitations Invitation[]
-  dashboards  Dashboard[]
-  reports     Report[]
-  profiles    Profile[]
-  events      Event[]
-  auditLogs   AuditLog[]
-  idHierarchy IdHierarchy[]
+  memberships    ProjectMembership[]
+  invitations    Invitation[]
+  dashboards     Dashboard[]
+  reports        Report[]
+  profiles       Profile[]
+  events         Event[]
+  auditLogs      AuditLog[]
+  idHierarchy    IdHierarchy[]
+  segments       Segment[]
+  eventSchemas   EventSchema[]
+  profileSchemas ProfileSchema[]
 }
 
 // ProjectMembership model
@@ -191,6 +194,59 @@ model IdHierarchy {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   
   @@unique([projectId, codeName])
+  @@index([projectId])
+}
+
+// Segment model
+model Segment {
+  id           String   @id @default(cuid())
+  projectId    String
+  name         String
+  description  String?
+  filterConfig Json     // SegmentFilterConfig
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name])
+  @@index([projectId])
+}
+
+// EventSchema model
+model EventSchema {
+  id          String   @id @default(cuid())
+  projectId   String
+  eventName   String
+  displayName String
+  icon        String?
+  properties  Json     // EventPropertySchema[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, eventName])
+  @@index([projectId])
+}
+
+// ProfileSchema model
+model ProfileSchema {
+  id              String   @id @default(cuid())
+  projectId       String
+  field           String
+  displayName     String
+  dataType        String   // SchemaDataType
+  icon            String?
+  category        String?
+  suggestedValues Json?    // string[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, field])
   @@index([projectId])
 }
 

@@ -148,7 +148,7 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
                           {/* Event bar */}
                           <div className="flex-1 group relative">
                             <div
-                              className="w-full bg-blue-600 hover:bg-blue-700 rounded-t cursor-pointer transition-colors"
+                              className="w-full bg-red-600 hover:bg-red-700 rounded-t cursor-pointer transition-colors"
                               style={{ height: `${eventHeightPx}px` }}
                             >
                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
@@ -179,7 +179,7 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
                     <span className="text-sm text-gray-600 dark:text-gray-400">New Users</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-600 rounded"></div>
+                    <div className="w-3 h-3 bg-red-600 rounded"></div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">Events</span>
                   </div>
                 </div>

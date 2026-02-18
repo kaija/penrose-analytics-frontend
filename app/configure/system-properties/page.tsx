@@ -1,10 +1,10 @@
-import PlaceholderPage from '../PlaceholderPage';
+import { redirect } from 'next/navigation';
+import { validateSession } from '@/lib/session';
+import SystemPropertiesClient from './SystemPropertiesClient';
 
-export default function SystemPropertiesPage() {
-  return (
-    <PlaceholderPage
-      title="System Properties"
-      description="System-level property configuration will be available here."
-    />
-  );
+export default async function SystemPropertiesPage() {
+  const session = await validateSession();
+  if (!session) redirect('/login');
+  if (!session.activeProjectId) redirect('/projects');
+  return <SystemPropertiesClient projectId={session.activeProjectId} />;
 }

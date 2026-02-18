@@ -23,7 +23,15 @@ export type Action =
   | 'report:update'
   | 'report:delete'
   | 'profile:read'
-  | 'event:read';
+  | 'event:read'
+  | 'segment:read'
+  | 'segment:create'
+  | 'segment:update'
+  | 'segment:delete'
+  | 'schema:read'
+  | 'schema:create'
+  | 'schema:update'
+  | 'schema:delete';
 
 /**
  * Permission matrix defining which actions each role can perform
@@ -55,6 +63,14 @@ export const ROLE_PERMISSIONS: Record<Role, Action[]> = {
     'report:delete',
     'profile:read',
     'event:read',
+    'segment:read',
+    'segment:create',
+    'segment:update',
+    'segment:delete',
+    'schema:read',
+    'schema:create',
+    'schema:update',
+    'schema:delete',
   ],
   admin: [
     'project:read',
@@ -73,6 +89,14 @@ export const ROLE_PERMISSIONS: Record<Role, Action[]> = {
     'report:delete',
     'profile:read',
     'event:read',
+    'segment:read',
+    'segment:create',
+    'segment:update',
+    'segment:delete',
+    'schema:read',
+    'schema:create',
+    'schema:update',
+    'schema:delete',
   ],
   editor: [
     'project:read',
@@ -86,6 +110,11 @@ export const ROLE_PERMISSIONS: Record<Role, Action[]> = {
     'report:delete',
     'profile:read',
     'event:read',
+    'segment:read',
+    'segment:create',
+    'segment:update',
+    'segment:delete',
+    'schema:read',
   ],
   viewer: [
     'project:read',
@@ -93,6 +122,8 @@ export const ROLE_PERMISSIONS: Record<Role, Action[]> = {
     'report:read',
     'profile:read',
     'event:read',
+    'segment:read',
+    'schema:read',
   ],
 };
 
