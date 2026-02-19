@@ -4,7 +4,14 @@
  * Requirements: 2.6, 2.7, 2.8, 2.9, 15.2, 15.3, 15.4, 15.5
  */
 
-import { createSession, validateSession, destroySession, updateActiveProject } from '@/lib/session';
+import {
+  createSession,
+  validateSession,
+  destroySession,
+  updateActiveProject,
+  createAccessSimulationSession,
+  exitAccessSimulation
+} from '@/lib/session';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 
@@ -167,6 +174,178 @@ describe('Session Management', () => {
       }
 
       expect(mockSession.save).toHaveBeenCalledTimes(projects.length);
+    });
+  });
+
+  describe('createAccessSimulationSession', () => {
+    it('should create access simulation session with all required fields', async () => {
+      const superAdminUserId = 'admin-123';
+      const projectId = 'project-456';
+
+      await createAccessSimulationSession(superAdminUserId, projectId);
+
+      // Verify all session fields are set correctly
+      expect(mockSession.originalUserId).toBe(superAdminUserId);
+      expect(mockSession.superAdminMode).toBe(true);
+      expect(mockSession.simulatedProjectId).toBe(projectId);
+      expect(mockSession.activeProjectId).toBe(projectId);
+      expect(mockSession.userId).toBe(superAdminUserId);
+      expect(mockSession.save).toHaveBeenCalled();
+    });
+
+    it('should preserve super admin user ID in originalUserId', async () => {
+      const superAdminUserId = 'admin-999';
+      const projectId = 'project-123';
+
+      await createAccessSimulationSession(superAdminUserId, projectId);
+
+      expect(mockSession.originalUserId).toBe(superAdminUserId);
+      expect(mockSession.userId).toBe(superAdminUserId);
+    });
+
+    it('should set superAdminMode flag to true', async () => {
+      const superAdminUserId = 'admin-123';
+      const projectId = 'project-456';
+
+      await createAccessSimulationSession(superAdminUserId, projectId);
+
+      expect(mockSession.superAdminMode).toBe(true);
+    });
+
+    it('should set both simulatedProjectId and activeProjectId to target project', async () => {
+      const superAdminUserId = 'admin-123';
+      const projectId = 'project-789';
+
+      await createAccessSimulationSession(superAdminUserId, projectId);
+
+      expect(mockSession.simulatedProjectId).toBe(projectId);
+      expect(mockSession.activeProjectId).toBe(projectId);
+    });
+
+    it('should handle multiple access simulation sessions', async () => {
+      const simulations = [
+        { adminId: 'admin-1', projectId: 'project-1' },
+        { adminId: 'admin-2', projectId: 'project-2' },
+        { adminId: 'admin-3', projectId: 'project-3' },
+      ];
+
+      for (const sim of simulations) {
+        await createAccessSimulationSession(sim.adminId, sim.projectId);
+
+        expect(mockSession.originalUserId).toBe(sim.adminId);
+        expect(mockSession.simulatedProjectId).toBe(sim.projectId);
+        expect(mockSession.superAdminMode).toBe(true);
+      }
+
+      expect(mockSession.save).toHaveBeenCalledTimes(simulations.length);
+    });
+  });
+
+  describe('exitAccessSimulation', () => {
+    it('should restore original session state when exiting access simulation', async () => {
+      // Set up a session in access simulation mode
+      mockSession.userId = 'admin-123';
+      mockSession.originalUserId = 'admin-123';
+      mockSession.superAdminMode = true;
+      mockSession.simulatedProjectId = 'project-456';
+      mockSession.activeProjectId = 'project-456';
+
+      await exitAccessSimulation();
+
+      // Verify simulation flags are cleared
+      expect(mockSession.activeProjectId).toBeNull();
+      expect(mockSession.superAdminMode).toBeUndefined();
+      expect(mockSession.originalUserId).toBeUndefined();
+      expect(mockSession.simulatedProjectId).toBeUndefined();
+      expect(mockSession.save).toHaveBeenCalled();
+    });
+
+    it('should not modify session when not in super admin mode', async () => {
+      // Set up a regular session (not in access simulation mode)
+      mockSession.userId = 'user-123';
+      mockSession.activeProjectId = 'project-456';
+      mockSession.superAdminMode = undefined;
+      mockSession.originalUserId = undefined;
+
+      await exitAccessSimulation();
+
+      // Verify session remains unchanged
+      expect(mockSession.userId).toBe('user-123');
+      expect(mockSession.activeProjectId).toBe('project-456');
+      expect(mockSession.save).not.toHaveBeenCalled();
+    });
+
+    it('should not modify session when superAdminMode is true but originalUserId is missing', async () => {
+      // Set up an invalid simulation state
+      mockSession.userId = 'admin-123';
+      mockSession.superAdminMode = true;
+      mockSession.originalUserId = undefined;
+      mockSession.activeProjectId = 'project-456';
+
+      await exitAccessSimulation();
+
+      // Verify session remains unchanged
+      expect(mockSession.superAdminMode).toBe(true);
+      expect(mockSession.activeProjectId).toBe('project-456');
+      expect(mockSession.save).not.toHaveBeenCalled();
+    });
+
+    it('should handle round-trip: create simulation then exit', async () => {
+      const superAdminUserId = 'admin-789';
+      const projectId = 'project-999';
+
+      // Create access simulation session
+      await createAccessSimulationSession(superAdminUserId, projectId);
+
+      // Verify simulation is active
+      expect(mockSession.superAdminMode).toBe(true);
+      expect(mockSession.originalUserId).toBe(superAdminUserId);
+      expect(mockSession.simulatedProjectId).toBe(projectId);
+      expect(mockSession.activeProjectId).toBe(projectId);
+
+      // Exit access simulation
+      await exitAccessSimulation();
+
+      // Verify simulation is cleared
+      expect(mockSession.activeProjectId).toBeNull();
+      expect(mockSession.superAdminMode).toBeUndefined();
+      expect(mockSession.originalUserId).toBeUndefined();
+      expect(mockSession.simulatedProjectId).toBeUndefined();
+
+      // Verify save was called twice (once for create, once for exit)
+      expect(mockSession.save).toHaveBeenCalledTimes(2);
+    });
+
+    it('should clear activeProjectId to null, not undefined', async () => {
+      // Set up a session in access simulation mode
+      mockSession.userId = 'admin-123';
+      mockSession.originalUserId = 'admin-123';
+      mockSession.superAdminMode = true;
+      mockSession.simulatedProjectId = 'project-456';
+      mockSession.activeProjectId = 'project-456';
+
+      await exitAccessSimulation();
+
+      // Verify activeProjectId is explicitly set to null
+      expect(mockSession.activeProjectId).toBeNull();
+      expect(mockSession.activeProjectId).not.toBeUndefined();
+    });
+
+    it('should handle multiple exit calls safely', async () => {
+      // Set up a session in access simulation mode
+      mockSession.userId = 'admin-123';
+      mockSession.originalUserId = 'admin-123';
+      mockSession.superAdminMode = true;
+      mockSession.simulatedProjectId = 'project-456';
+      mockSession.activeProjectId = 'project-456';
+
+      // First exit
+      await exitAccessSimulation();
+      expect(mockSession.save).toHaveBeenCalledTimes(1);
+
+      // Second exit (should be a no-op)
+      await exitAccessSimulation();
+      expect(mockSession.save).toHaveBeenCalledTimes(1); // Still 1, not 2
     });
   });
 });

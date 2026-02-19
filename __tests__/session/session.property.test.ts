@@ -206,4 +206,73 @@ describe('Session Management Property Tests', () => {
       { numRuns: 100 }
     );
   });
+
+  /**
+   * Property 8: Access simulation round-trip
+   *
+   * For any super admin session, entering access simulation mode and then exiting
+   * should restore the original session state with superAdminMode removed and
+   * activeProjectId cleared.
+   *
+   * **Validates: Requirements 2.4**
+   */
+  test('Property 8: Access simulation round-trip restores original session state', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.uuid(), // superAdminUserId
+        fc.uuid(), // projectId
+        async (superAdminUserId, projectId) => {
+          // Reset mock for this iteration
+          const localMockSession = {
+            userId: undefined,
+            activeProjectId: undefined,
+            superAdminMode: undefined,
+            originalUserId: undefined,
+            simulatedProjectId: undefined,
+            save: jest.fn().mockResolvedValue(undefined),
+            destroy: jest.fn(),
+          };
+
+          (getIronSession as jest.Mock).mockResolvedValue(localMockSession);
+
+          // Import the functions we need to test
+          const { createAccessSimulationSession, exitAccessSimulation } = require('@/lib/session');
+
+          // Step 1: Create access simulation session
+          await createAccessSimulationSession(superAdminUserId, projectId);
+
+          // Verify simulation session is created correctly
+          expect(localMockSession.userId).toBe(superAdminUserId);
+          expect(localMockSession.originalUserId).toBe(superAdminUserId);
+          expect(localMockSession.superAdminMode).toBe(true);
+          expect(localMockSession.simulatedProjectId).toBe(projectId);
+          expect(localMockSession.activeProjectId).toBe(projectId);
+          expect(localMockSession.save).toHaveBeenCalledTimes(1);
+
+          // Step 2: Exit access simulation
+          await exitAccessSimulation();
+
+          // Verify original session state is restored
+          // Requirement 2.4: activeProjectId should be cleared (set to null)
+          expect(localMockSession.activeProjectId).toBeNull();
+
+          // Requirement 2.4: superAdminMode should be removed
+          expect(localMockSession.superAdminMode).toBeUndefined();
+
+          // originalUserId should be removed
+          expect(localMockSession.originalUserId).toBeUndefined();
+
+          // simulatedProjectId should be removed
+          expect(localMockSession.simulatedProjectId).toBeUndefined();
+
+          // userId should remain unchanged (still the super admin)
+          expect(localMockSession.userId).toBe(superAdminUserId);
+
+          // save should have been called twice (once for create, once for exit)
+          expect(localMockSession.save).toHaveBeenCalledTimes(2);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
 });

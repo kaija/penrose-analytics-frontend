@@ -28,12 +28,26 @@ export async function GET() {
         return NextResponse.json({ error: 'Access denied' }, { status: 403 });
       }
 
-      // Get all projects
+      // Get all projects with member counts
       const projects = await prisma.project.findMany({
+        include: {
+          _count: {
+            select: { memberships: true }
+          }
+        },
         orderBy: { createdAt: 'desc' },
       });
 
-      return NextResponse.json(projects);
+      // Transform to ProjectWithStats format
+      const projectsWithStats = projects.map(p => ({
+        id: p.id,
+        name: p.name,
+        enabled: p.enabled,
+        createdAt: p.createdAt,
+        memberCount: p._count.memberships
+      }));
+
+      return NextResponse.json(projectsWithStats);
     } finally {
       await prisma.$disconnect();
     }

@@ -85,11 +85,19 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
   return (
     <MainLayout leftSidebar={<ConfigureSidebar />}>
       <div>
-        <div className="flex items-center gap-3 mb-6">
-          <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Project Status
-          </h1>
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Project Status
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 ml-9">
+            <span className="text-sm text-gray-500 dark:text-gray-400">Project ID:</span>
+            <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-sm font-mono">
+              {projectId}
+            </code>
+          </div>
         </div>
 
         {loading ? (

@@ -4,10 +4,14 @@ import { cookies } from 'next/headers';
 /**
  * Session data structure
  * Contains userId and activeProjectId for authenticated users
+ * Supports super admin access simulation with additional fields
  */
 export interface SessionData {
   userId: string;
   activeProjectId: string | null;
+  superAdminMode?: boolean; // Flag indicating super admin access simulation mode
+  originalUserId?: string; // Preserved super admin user ID during simulation
+  simulatedProjectId?: string; // The project being accessed in simulation mode
 }
 
 /**
@@ -108,4 +112,67 @@ export async function updateActiveProject(projectId: string): Promise<void> {
 
   session.activeProjectId = projectId;
   await session.save();
+}
+
+/**
+ * Create an access simulation session for super admin
+ * Preserves the super admin's original context while simulating project owner access
+ *
+ * @param superAdminUserId - The super admin user's ID
+ * @param projectId - The project ID to simulate access to
+ * @returns Promise that resolves when session is saved
+ *
+ * Requirements: 2.1, 2.3
+ */
+export async function createAccessSimulationSession(
+  superAdminUserId: string,
+  projectId: string
+): Promise<void> {
+  const session = await getSession();
+
+  // Preserve the super admin's original user ID
+  session.originalUserId = superAdminUserId;
+
+  // Enable super admin mode flag
+  session.superAdminMode = true;
+
+  // Set the simulated project ID
+  session.simulatedProjectId = projectId;
+
+  // Set the active project to the target project
+  session.activeProjectId = projectId;
+
+  // Keep userId as the super admin's ID for audit purposes
+  session.userId = superAdminUserId;
+
+  await session.save();
+}
+
+/**
+ * Exit access simulation mode and restore original super admin session
+ * Clears simulation flags and restores the session to normal super admin state
+ *
+ * @returns Promise that resolves when session is restored
+ *
+ * Requirements: 2.4
+ */
+export async function exitAccessSimulation(): Promise<void> {
+  const session = await getSession();
+
+  // Only proceed if we're in super admin mode with an original user ID
+  if (session.superAdminMode && session.originalUserId) {
+    // Clear the active project ID
+    session.activeProjectId = null;
+
+    // Remove super admin mode flag
+    delete session.superAdminMode;
+
+    // Remove original user ID (no longer needed)
+    delete session.originalUserId;
+
+    // Remove simulated project ID
+    delete session.simulatedProjectId;
+
+    await session.save();
+  }
 }

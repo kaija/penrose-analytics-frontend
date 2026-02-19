@@ -61,7 +61,7 @@ export default function TopNavigation() {
         <div className="flex items-center space-x-4">
           {isSuperAdmin && (
             <Link
-              href="/__super_admin__/users"
+              href={`/super-admin/${process.env.NEXT_PUBLIC_SUPER_ADMIN_PATH || 'admin'}`}
               className="px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
             >
               Super Admin
