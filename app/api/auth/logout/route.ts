@@ -6,12 +6,29 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { destroySession } from '@/lib/session';
+import { destroySession, validateSession } from '@/lib/session';
+import { createAuditLog, getIpAddress, getUserAgent } from '@/lib/audit-log';
 
 export async function POST(request: NextRequest) {
   try {
+    // Get session before destroying it
+    const session = await validateSession();
+    
     // Destroy the session and clear cookies
     await destroySession();
+
+    // Log logout if we had a valid session
+    if (session) {
+      await createAuditLog(
+        session.userId,
+        'auth.logout',
+        {
+          resourceType: 'authentication',
+          ipAddress: getIpAddress(request.headers),
+          userAgent: getUserAgent(request.headers),
+        }
+      );
+    }
 
     // Redirect to login page
     return NextResponse.redirect(new URL('/login', request.url));
@@ -30,8 +47,24 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
+    // Get session before destroying it
+    const session = await validateSession();
+    
     // Destroy the session and clear cookies
     await destroySession();
+
+    // Log logout if we had a valid session
+    if (session) {
+      await createAuditLog(
+        session.userId,
+        'auth.logout',
+        {
+          resourceType: 'authentication',
+          ipAddress: getIpAddress(request.headers),
+          userAgent: getUserAgent(request.headers),
+        }
+      );
+    }
 
     // Redirect to login page
     return NextResponse.redirect(new URL('/login', request.url));

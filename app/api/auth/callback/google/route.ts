@@ -14,6 +14,7 @@ import {
 } from '@/lib/oauth';
 import { createSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
+import { createAuditLog, getIpAddress, getUserAgent } from '@/lib/audit-log';
 
 export async function GET(request: NextRequest) {
   try {
@@ -104,6 +105,21 @@ export async function GET(request: NextRequest) {
     // Create session (Requirement 2.5)
     await createSession(user.id, membership?.projectId ?? null);
 
+    // Log successful login
+    await createAuditLog(
+      user.id,
+      'auth.login.success',
+      {
+        resourceType: 'authentication',
+        metadata: {
+          provider: 'google',
+          isNewUser,
+        },
+        ipAddress: getIpAddress(request.headers),
+        userAgent: getUserAgent(request.headers),
+      }
+    );
+
     // Redirect based on user status
     if (isNewUser || !membership) {
       // New user or user with no projects - guide to create first project (Requirement 2.5)
@@ -114,6 +130,19 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('OAuth callback error:', error);
+    
+    // Try to log failed login if we have user info
+    try {
+      const searchParams = request.nextUrl.searchParams;
+      const code = searchParams.get('code');
+      if (code) {
+        // We can't get userId here since auth failed, so we'll skip audit log for now
+        // Failed logins without userId will be logged at the application level
+      }
+    } catch {
+      // Ignore audit log errors
+    }
+    
     return NextResponse.redirect(
       new URL('/login?error=authentication_failed', request.url)
     );

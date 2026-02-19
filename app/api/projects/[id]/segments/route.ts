@@ -18,6 +18,7 @@ import {
   validateStringLength,
 } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
+import { createAuditLog, getIpAddress, getUserAgent } from '@/lib/audit-log';
 
 /**
  * GET /api/projects/[id]/segments
@@ -102,6 +103,23 @@ export const POST = withErrorHandler(async (
         createdBy: session.userId,
       },
     });
+
+    // Log segment creation
+    await createAuditLog(
+      session.userId,
+      'segment.create',
+      {
+        resourceId: segment.id,
+        resourceName: segment.name,
+        resourceType: 'segment',
+        metadata: {
+          description: segment.description,
+        },
+        ipAddress: getIpAddress(request.headers),
+        userAgent: getUserAgent(request.headers),
+      },
+      projectId
+    );
 
     return successResponse(segment, 201);
   } catch (error: unknown) {
