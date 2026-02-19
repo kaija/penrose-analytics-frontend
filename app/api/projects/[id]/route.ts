@@ -1,8 +1,8 @@
 /**
  * Project Detail API Routes
- * 
+ *
  * PUT /api/projects/[id] - Update a project
- * 
+ *
  * Requirements: 3.1
  */
 
@@ -10,11 +10,11 @@ import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession } from '@/lib/session';
 import { getUserRole } from '@/lib/project';
-import { 
-  AuthenticationError, 
+import {
+  AuthenticationError,
   AuthorizationError,
   NotFoundError,
-  validateStringLength 
+  validateStringLength
 } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 
@@ -22,7 +22,7 @@ import { prisma } from '@/lib/prisma';
  * PUT /api/projects/[id]
  * Update a project
  * Only owners and admins can update projects
- * 
+ *
  * Requirements: 3.1
  */
 export const PUT = withErrorHandler(async (

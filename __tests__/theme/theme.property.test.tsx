@@ -4,7 +4,7 @@
 
 /**
  * Property-Based Tests for Theme Persistence
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -49,10 +49,10 @@ describe('Theme Persistence Property Tests', () => {
 
   /**
    * Property 28: Theme Persistence
-   * 
-   * For any theme selection change, the system must persist the preference 
+   *
+   * For any theme selection change, the system must persist the preference
    * in browser storage, and when the user returns, must apply the saved theme.
-   * 
+   *
    * Validates: Requirements 20.4, 20.5
    */
   test('Property 28: Theme changes persist and are restored', async () => {
@@ -91,7 +91,7 @@ describe('Theme Persistence Property Tests', () => {
           // Simulate user returning: create new ThemeProvider instance
           // This tests that the saved theme is restored on mount
           const savedTheme = localStorage.getItem('theme');
-          
+
           await act(async () => {
             render(
               <ThemeProvider>
@@ -115,7 +115,7 @@ describe('Theme Persistence Property Tests', () => {
 
   /**
    * Property: Theme persistence is idempotent
-   * 
+   *
    * Setting the same theme multiple times should result in the same state
    * as setting it once.
    */
@@ -154,7 +154,7 @@ describe('Theme Persistence Property Tests', () => {
 
   /**
    * Property: Theme restoration works regardless of initial state
-   * 
+   *
    * When a theme is saved in localStorage, it should be restored correctly
    * regardless of what the initial DOM state was.
    */
@@ -198,7 +198,7 @@ describe('Theme Persistence Property Tests', () => {
 
   /**
    * Property: No saved theme defaults to light
-   * 
+   *
    * When no theme is saved in localStorage, the system should default to light theme.
    */
   test('Property: Missing theme preference defaults to light', async () => {

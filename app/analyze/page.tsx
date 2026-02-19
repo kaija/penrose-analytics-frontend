@@ -11,7 +11,7 @@ export default function AnalyzePage() {
           <button className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition-colors mb-4">
             + New Report
           </button>
-          
+
           {/* Report categories */}
           <div>
             <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
@@ -49,7 +49,7 @@ export default function AnalyzePage() {
             <div className="flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-950 rounded-lg mb-4 group-hover:bg-red-200 dark:group-hover:bg-red-900 transition-colors">
               <TrendingUp className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
-            
+
             {/* Illustration */}
             <div className="mb-4 h-32 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-700">
               <svg className="w-full h-full p-4" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -76,7 +76,7 @@ export default function AnalyzePage() {
             <div className="flex items-center justify-center w-16 h-16 bg-cyan-100 dark:bg-cyan-950 rounded-lg mb-4 group-hover:bg-cyan-200 dark:group-hover:bg-cyan-900 transition-colors">
               <GitBranch className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />
             </div>
-            
+
             {/* Illustration */}
             <div className="mb-4 h-32 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-700">
               <svg className="w-full h-full p-4" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -84,11 +84,11 @@ export default function AnalyzePage() {
                 <path d="M20 20 Q60 20 60 35" stroke="currentColor" strokeWidth="8" className="text-cyan-600 dark:text-cyan-400" opacity="0.6" strokeLinecap="round"/>
                 <path d="M20 50 Q60 50 60 50" stroke="currentColor" strokeWidth="12" className="text-cyan-600 dark:text-cyan-400" opacity="0.7" strokeLinecap="round"/>
                 <path d="M20 80 Q60 80 60 65" stroke="currentColor" strokeWidth="6" className="text-cyan-600 dark:text-cyan-400" opacity="0.5" strokeLinecap="round"/>
-                
+
                 <path d="M100 35 Q140 35 140 30" stroke="currentColor" strokeWidth="6" className="text-cyan-600 dark:text-cyan-400" opacity="0.6" strokeLinecap="round"/>
                 <path d="M100 50 Q140 50 140 50" stroke="currentColor" strokeWidth="10" className="text-cyan-600 dark:text-cyan-400" opacity="0.7" strokeLinecap="round"/>
                 <path d="M100 65 Q140 65 140 70" stroke="currentColor" strokeWidth="8" className="text-cyan-600 dark:text-cyan-400" opacity="0.5" strokeLinecap="round"/>
-                
+
                 {/* Nodes */}
                 <rect x="10" y="10" width="10" height="80" rx="2" fill="currentColor" className="text-gray-400 dark:text-gray-600"/>
                 <rect x="60" y="25" width="40" height="50" rx="2" fill="currentColor" className="text-gray-400 dark:text-gray-600"/>
@@ -109,7 +109,7 @@ export default function AnalyzePage() {
             <div className="flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-950 rounded-lg mb-4 group-hover:bg-green-200 dark:group-hover:bg-green-900 transition-colors">
               <Users className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            
+
             {/* Illustration */}
             <div className="mb-4 h-32 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-700">
               <svg className="w-full h-full p-4" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -119,16 +119,16 @@ export default function AnalyzePage() {
                 <rect x="90" y="20" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.6"/>
                 <rect x="125" y="20" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.4"/>
                 <rect x="160" y="20" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.2"/>
-                
+
                 <rect x="20" y="40" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="1"/>
                 <rect x="55" y="40" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.7"/>
                 <rect x="90" y="40" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.5"/>
                 <rect x="125" y="40" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.3"/>
-                
+
                 <rect x="20" y="60" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="1"/>
                 <rect x="55" y="60" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.75"/>
                 <rect x="90" y="60" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.5"/>
-                
+
                 <rect x="20" y="80" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="1"/>
                 <rect x="55" y="80" width="30" height="15" rx="2" fill="currentColor" className="text-green-600 dark:text-green-400" opacity="0.8"/>
               </svg>

@@ -1,6 +1,6 @@
 /**
  * Unit tests for email delivery system
- * 
+ *
  * Feature: prism
  * Testing Framework: Jest
  */
@@ -16,10 +16,10 @@ describe('Email Delivery System', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset transporter to ensure fresh instance
     resetTransporter();
-    
+
     // Setup mock transporter
     mockTransporter = {
       sendMail: jest.fn(),
@@ -39,18 +39,18 @@ describe('Email Delivery System', () => {
   afterEach(async () => {
     // Reset transporter
     resetTransporter();
-    
+
     // Clear environment variables
     delete process.env.SMTP_HOST;
     delete process.env.SMTP_PORT;
     delete process.env.SMTP_USER;
     delete process.env.SMTP_PASSWORD;
     delete process.env.SMTP_FROM;
-    
+
     // Ensure all timers are cleared and restored
     jest.clearAllTimers();
     jest.useRealTimers();
-    
+
     // Wait for any pending promises to resolve
     await new Promise(resolve => setImmediate(resolve));
   });
@@ -58,7 +58,7 @@ describe('Email Delivery System', () => {
   describe('SMTP Configuration', () => {
     /**
      * Test SMTP configuration loaded from environment
-     * 
+     *
      * **Validates: Requirements 16.1**
      */
     test('loads SMTP configuration from environment variables', async () => {
@@ -86,7 +86,7 @@ describe('Email Delivery System', () => {
       // Reset transporter and update env
       resetTransporter();
       process.env.SMTP_PORT = '465';
-      
+
       mockTransporter.sendMail.mockResolvedValue({ messageId: 'test-id' });
 
       await sendEmail({
@@ -108,7 +108,7 @@ describe('Email Delivery System', () => {
       // Reset transporter and remove SMTP_FROM
       resetTransporter();
       delete process.env.SMTP_FROM;
-      
+
       mockTransporter.sendMail.mockResolvedValue({ messageId: 'test-id' });
 
       await sendEmail({
@@ -174,7 +174,7 @@ describe('Email Delivery System', () => {
   describe('Error Handling and Retry Logic', () => {
     /**
      * Test email delivery failure logged and queued
-     * 
+     *
      * **Validates: Requirements 16.5**
      */
     test('logs error and retries on delivery failure', async () => {
@@ -196,7 +196,7 @@ describe('Email Delivery System', () => {
 
       // Fast-forward through first retry delay (1 minute)
       await jest.advanceTimersByTimeAsync(60000);
-      
+
       // Fast-forward through second retry delay (5 minutes)
       await jest.advanceTimersByTimeAsync(300000);
 
@@ -322,7 +322,7 @@ describe('Email Delivery System', () => {
 
       // Verify createTransport was only called once (transporter reused)
       expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
-      
+
       // Verify sendMail was called 3 times
       expect(mockTransporter.sendMail).toHaveBeenCalledTimes(3);
     });

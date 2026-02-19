@@ -1,6 +1,6 @@
 /**
  * Property-based tests for project management
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -50,11 +50,11 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 3: Project Creation Invariants
-   * 
+   *
    * For any project creation operation, the system must:
    * - Store the project name and creation timestamp
    * - Automatically create a ProjectMembership record assigning the creator as owner role
-   * 
+   *
    * **Validates: Requirements 3.1, 3.2**
    */
   test('Property 3: Project creation creates owner membership', async () => {
@@ -129,10 +129,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 4: Multiple Project Creation
-   * 
+   *
    * For any user, creating multiple projects sequentially must succeed for each creation,
    * with each project having a unique ID and the user having owner role in all created projects.
-   * 
+   *
    * **Validates: Requirements 3.3**
    */
   test('Property 4: Users can create multiple projects', async () => {
@@ -209,10 +209,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 5: Project Switching Updates Session
-   * 
+   *
    * For any valid project switch operation, the activeProjectId in the session
    * must be updated to the new project ID.
-   * 
+   *
    * **Validates: Requirements 3.4**
    */
   test('Property 5: Project switching updates session', async () => {
@@ -256,7 +256,7 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Additional property: Project access validation
-   * 
+   *
    * For any user-project pair, hasProjectAccess should return true if and only if
    * a ProjectMembership exists for that user-project combination.
    */
@@ -293,7 +293,7 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Additional property: User role retrieval consistency
-   * 
+   *
    * For any user-project pair with a membership, getUserRole should return
    * the exact role from the membership record.
    */
@@ -326,7 +326,7 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Additional property: getUserProjects returns all memberships
-   * 
+   *
    * For any user, getUserProjects should return exactly the projects
    * for which the user has memberships.
    */
@@ -379,10 +379,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 20: Project Member Listing
-   * 
+   *
    * For any request by a user with owner or admin role to view project members,
    * the system must return all ProjectMembership records for that project.
-   * 
+   *
    * **Validates: Requirements 17.1**
    */
   test('Property 20: Project member listing returns all memberships', async () => {
@@ -437,10 +437,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 21: Project Member Role Update
-   * 
+   *
    * For any role update operation by a project owner, the system must update
    * the ProjectMembership record with the new role.
-   * 
+   *
    * **Validates: Requirements 17.3**
    */
   test('Property 21: Owner can update member roles', async () => {
@@ -499,10 +499,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 22: Project Member Removal
-   * 
+   *
    * For any member removal operation by an owner or admin, the system must
    * delete the ProjectMembership record.
-   * 
+   *
    * **Validates: Requirements 17.4**
    */
   test('Property 22: Owner/admin can remove members', async () => {
@@ -557,10 +557,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 23: Last Owner Protection
-   * 
+   *
    * For any project, attempting to remove or change the role of the last
    * remaining owner must be rejected by the system.
-   * 
+   *
    * **Validates: Requirements 17.5**
    */
   test('Property 23: Cannot remove last owner', async () => {
@@ -604,10 +604,10 @@ describe('Project Management Property Tests', () => {
 
   /**
    * Property 24: Admin Cannot Modify Owner
-   * 
+   *
    * For any user with admin role, attempting to modify (change role or remove)
    * a user with owner role must be rejected by the system.
-   * 
+   *
    * **Validates: Requirements 17.6**
    */
   test('Property 24: Admin cannot modify owner roles', async () => {

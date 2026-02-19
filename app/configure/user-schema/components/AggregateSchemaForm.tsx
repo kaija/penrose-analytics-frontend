@@ -43,7 +43,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
   const [description, setDescription] = useState('');
   const [dataType, setDataType] = useState<SchemaDataType>('number');
   const [format, setFormat] = useState('');
-  
+
   // Aggregate config
   const [operation, setOperation] = useState<AggregateOperation>('count');
   const [timeframeValue, setTimeframeValue] = useState(90);
@@ -54,15 +54,15 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
   const [eventPropertyMode, setEventPropertyMode] = useState<'select' | 'custom'>('select');
   const [aggregateBy, setAggregateBy] = useState<'unique' | 'total'>('total');
   const [filters, setFilters] = useState<EventFilterCondition[]>([]);
-  
+
   // Event schemas from API
   const [eventSchemas, setEventSchemas] = useState<EventSchema[]>([]);
   const [loadingSchemas, setLoadingSchemas] = useState(false);
-  
+
   // Get properties for selected event
   const selectedEventSchema = eventSchemas.find(s => s.eventName === eventName);
   const availableProperties = selectedEventSchema?.properties || [];
-  
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,7 +94,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
       setDescription(editing.description ?? '');
       setDataType(editing.dataType as SchemaDataType);
       setFormat(editing.format ?? '');
-      
+
       if (editing.aggregateConfig) {
         const config = editing.aggregateConfig;
         setOperation(config.operation);
@@ -131,7 +131,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
 
   const handleSave = async () => {
     setError(null);
-    
+
     if (!field.trim()) { setError('欄位名稱為必填'); return; }
     if (!displayName.trim()) { setError('顯示名稱為必填'); return; }
     if (!/^[a-z][a-z0-9_]*$/.test(field.trim())) {
@@ -168,7 +168,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
         ? `/api/projects/${projectId}/schema/users/${editing.id}`
         : `/api/projects/${projectId}/schema/users`;
       const method = editing ? 'PATCH' : 'POST';
-      
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -229,7 +229,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
         {/* Aggregate Config */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">聚合設定</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">運算類型 *</label>
@@ -277,7 +277,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
                   自行輸入
                 </button>
               </div>
-              
+
               {eventNameMode === 'select' ? (
                 <select value={eventName} onChange={e => setEventName(e.target.value)}
                   disabled={loadingSchemas}
@@ -319,7 +319,7 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
                   自行輸入
                 </button>
               </div>
-              
+
               {eventPropertyMode === 'select' ? (
                 <select value={eventProperty} onChange={e => setEventProperty(e.target.value)}
                   disabled={!eventName || availableProperties.length === 0}

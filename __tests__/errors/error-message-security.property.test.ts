@@ -1,9 +1,9 @@
 /**
  * Property-based tests for error message security
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
- * 
+ *
  * Tests that the system does not expose sensitive implementation details
  * (stack traces, database errors, internal paths) in error responses to non-admin users.
  */
@@ -19,10 +19,10 @@ import {
 describe('Error Message Security Property Tests', () => {
   /**
    * Property 27: Error Message Security
-   * 
+   *
    * For any error response to a non-admin user, the system must not expose
    * sensitive implementation details (stack traces, database errors, internal paths).
-   * 
+   *
    * **Validates: Requirements 19.6**
    */
   describe('Property 27: Error message security', () => {
@@ -34,10 +34,10 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage, isOperational) => {
             // Create an AppError with potentially sensitive information
             const error = new AppError(errorMessage, 500, isOperational);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             if (isOperational) {
               // Operational errors can expose their message
               expect(response.error.message).toBe(errorMessage);
@@ -47,7 +47,7 @@ describe('Error Message Security Property Tests', () => {
               expect(response.error.message).toBe('An unexpected error occurred. Please try again later.');
               expect(response.error.message).not.toBe(errorMessage);
             }
-            
+
             // Details should never be exposed to non-admin users
             expect(response.error.details).toBeUndefined();
           }
@@ -63,20 +63,20 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage) => {
             // Create a generic Error (non-operational)
             const error = new Error(errorMessage);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Requirement 19.6: Generic errors must not expose original message
             expect(response.error.message).toBe('An unexpected error occurred. Please try again later.');
             expect(response.error.message).not.toContain(errorMessage);
-            
+
             // Status code should be 500
             expect(response.error.statusCode).toBe(500);
-            
+
             // Code should be InternalServerError
             expect(response.error.code).toBe('InternalServerError');
-            
+
             // Details should not be exposed
             expect(response.error.details).toBeUndefined();
           }
@@ -93,20 +93,20 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage, isOperational) => {
             // Create an error with a stack trace
             const error = new AppError(errorMessage, 500, isOperational);
-            
+
             // Ensure error has a stack trace
             expect(error.stack).toBeDefined();
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Requirement 19.6: Stack traces must not be exposed
             const responseStr = JSON.stringify(response);
             expect(responseStr).not.toContain('at ');
             expect(responseStr).not.toContain('.ts:');
             expect(responseStr).not.toContain('.js:');
             expect(responseStr).not.toContain('Error:');
-            
+
             // Stack trace should not be in any field
             expect(response.error.message).not.toContain(error.stack || '');
             if (response.error.details) {
@@ -136,13 +136,13 @@ describe('Error Message Security Property Tests', () => {
               value: errorType,
               writable: false,
             });
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(prismaError, false);
-            
+
             // Requirement 19.6: Database errors must be sanitized
             expect(response.error.message).not.toContain(errorMessage);
-            
+
             // Should return generic database error message
             expect(
               response.error.message === 'Service temporarily unavailable' ||
@@ -150,7 +150,7 @@ describe('Error Message Security Property Tests', () => {
               response.error.message.includes('already exists') ||
               response.error.message.includes('not found')
             ).toBe(true);
-            
+
             // Original error message should not be exposed
             expect(response.error.details).toBeUndefined();
           }
@@ -172,10 +172,10 @@ describe('Error Message Security Property Tests', () => {
             // Create a non-operational error with internal path in message
             const errorMessage = `Error in ${internalPath}: Failed`;
             const error = new Error(errorMessage);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Requirement 19.6: Internal paths must not be exposed
             expect(response.error.message).not.toContain(internalPath);
             expect(response.error.message).not.toContain('/usr/');
@@ -184,7 +184,7 @@ describe('Error Message Security Property Tests', () => {
             expect(response.error.message).not.toContain('/var/');
             expect(response.error.message).not.toContain('.ts');
             expect(response.error.message).not.toContain('.js');
-            
+
             // Error message should be sanitized (either generic or database error message)
             // Both are acceptable as they don't expose the internal path
             expect(
@@ -192,7 +192,7 @@ describe('Error Message Security Property Tests', () => {
               response.error.message === 'Service temporarily unavailable' ||
               response.error.message === 'Database operation failed'
             ).toBe(true);
-            
+
             // Status code should be 500 or 503 (both indicate server error)
             expect([500, 503]).toContain(response.error.statusCode);
           }
@@ -212,13 +212,13 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage, details) => {
             // Create an error with details
             const error = new AppError(errorMessage, 500, false, details);
-            
+
             // Format error response for admin user
             const response = formatErrorResponse(error, true);
-            
+
             // Admin should receive full error message
             expect(response.error.message).toBe(errorMessage);
-            
+
             // Admin should receive error details
             expect(response.error.details).toEqual(details);
           }
@@ -247,7 +247,7 @@ describe('Error Message Security Property Tests', () => {
           ),
           async (errorConfig) => {
             let error: AppError;
-            
+
             if (errorConfig.type === 'validation') {
               error = new ValidationError(errorConfig.message, errorConfig.fields);
             } else if (errorConfig.type === 'notfound') {
@@ -255,16 +255,16 @@ describe('Error Message Security Property Tests', () => {
             } else {
               error = new AppError(errorConfig.message, 403, true);
             }
-            
+
             // All these errors are operational
             expect(error.isOperational).toBe(true);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Operational errors can expose their message
             expect(response.error.message).toBe(error.message);
-            
+
             // But details should still not be exposed to non-admin
             expect(response.error.details).toBeUndefined();
           }
@@ -280,10 +280,10 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage) => {
             // Create a non-operational error
             const error = new Error(errorMessage);
-            
+
             // Sanitize for non-admin user
             const sanitized = sanitizeErrorMessage(error, false);
-            
+
             // Requirement 19.6: Must return generic message
             expect(sanitized).toBe('An unexpected error occurred. Please try again later.');
             expect(sanitized).not.toContain(errorMessage);
@@ -300,10 +300,10 @@ describe('Error Message Security Property Tests', () => {
           async (errorMessage) => {
             // Create an operational error
             const error = new AppError(errorMessage, 400, true);
-            
+
             // Sanitize for non-admin user
             const sanitized = sanitizeErrorMessage(error, false);
-            
+
             // Operational errors should preserve their message
             expect(sanitized).toBe(errorMessage);
           }
@@ -331,10 +331,10 @@ describe('Error Message Security Property Tests', () => {
           async (sensitiveContent) => {
             // Create a non-operational error with sensitive content
             const error = new Error(`Internal error: ${sensitiveContent}`);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Requirement 19.6: Sensitive content must not be exposed
             // Error message should be sanitized (generic or database error message)
             expect(
@@ -342,9 +342,9 @@ describe('Error Message Security Property Tests', () => {
               response.error.message === 'Service temporarily unavailable' ||
               response.error.message === 'Database operation failed'
             ).toBe(true);
-            
+
             const responseStr = JSON.stringify(response).toLowerCase();
-            
+
             // Check that sensitive patterns are not in the response
             expect(responseStr).not.toContain('password');
             expect(responseStr).not.toContain('secret');
@@ -377,15 +377,15 @@ describe('Error Message Security Property Tests', () => {
             const errors = errorConfigs.map(
               config => new AppError(config.message, 500, config.isOperational)
             );
-            
+
             // Format all errors for non-admin user
             const responses = errors.map(err => formatErrorResponse(err, false));
-            
+
             // Check each response
             for (let i = 0; i < errors.length; i++) {
               const error = errors[i];
               const response = responses[i];
-              
+
               if (error.isOperational) {
                 // Operational errors can expose message
                 expect(response.error.message).toBe(error.message);
@@ -393,7 +393,7 @@ describe('Error Message Security Property Tests', () => {
                 // Non-operational errors must be sanitized
                 expect(response.error.message).toBe('An unexpected error occurred. Please try again later.');
               }
-              
+
               // Details should never be exposed to non-admin
               expect(response.error.details).toBeUndefined();
             }
@@ -411,16 +411,16 @@ describe('Error Message Security Property Tests', () => {
           async (statusCode, errorMessage) => {
             // Create a non-operational error with various status codes
             const error = new AppError(errorMessage, statusCode, false);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(error, false);
-            
+
             // Requirement 19.6: All non-operational errors must be sanitized
             // regardless of status code
             expect(response.error.message).toBe('An unexpected error occurred. Please try again later.');
             expect(response.error.message).not.toContain(errorMessage);
             expect(response.error.details).toBeUndefined();
-            
+
             // Status code should be preserved
             expect(response.error.statusCode).toBe(statusCode);
           }

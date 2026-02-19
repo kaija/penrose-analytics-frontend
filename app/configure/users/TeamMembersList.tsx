@@ -3,7 +3,7 @@
 /**
  * Team Members List Component
  * Displays and manages project members
- * 
+ *
  * Requirements: 17.1, 17.2, 17.3, 17.4
  */
 

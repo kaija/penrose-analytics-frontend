@@ -1,9 +1,9 @@
 /**
  * Report Detail API Routes
- * 
+ *
  * PUT /api/reports/[id] - Update a report
  * DELETE /api/reports/[id] - Delete a report
- * 
+ *
  * Requirements: 8.8
  */
 
@@ -22,7 +22,7 @@ import {
  * PUT /api/reports/[id]
  * Update a report
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 8.8
  */
 export const PUT = withErrorHandler(async (
@@ -62,7 +62,7 @@ export const PUT = withErrorHandler(async (
   if (body.category !== undefined) {
     validationFields.category = { min: 1, max: 50 };
   }
-  
+
   if (Object.keys(validationFields).length > 0) {
     validateStringLength(body, validationFields);
   }
@@ -81,7 +81,7 @@ export const PUT = withErrorHandler(async (
  * DELETE /api/reports/[id]
  * Delete a report
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 8.8
  */
 export const DELETE = withErrorHandler(async (

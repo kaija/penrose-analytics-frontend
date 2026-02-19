@@ -1,7 +1,7 @@
 /**
  * Logout Route
  * Destroys user session and redirects to login page
- * 
+ *
  * Requirements: 2.10, 15.5
  */
 
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     // Get session before destroying it
     const session = await validateSession();
-    
+
     // Destroy the session and clear cookies
     await destroySession();
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get session before destroying it
     const session = await validateSession();
-    
+
     // Destroy the session and clear cookies
     await destroySession();
 

@@ -1,8 +1,8 @@
 /**
  * Project Switch API Route
- * 
+ *
  * POST /api/projects/[id]/switch - Switch active project
- * 
+ *
  * Requirements: 3.4, 3.12
  */
 
@@ -10,7 +10,7 @@ import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession, updateActiveProject } from '@/lib/session';
 import { switchProject } from '@/lib/project';
-import { 
+import {
   AuthenticationError,
   NotFoundError
 } from '@/lib/errors';
@@ -18,7 +18,7 @@ import {
 /**
  * POST /api/projects/[id]/switch
  * Switch the active project in the session
- * 
+ *
  * Requirements: 3.4, 3.12
  */
 export const POST = withErrorHandler(async (
@@ -40,12 +40,12 @@ export const POST = withErrorHandler(async (
 
   // Switch to the project (validates access)
   await switchProject(session.userId, projectId);
-  
+
   // Update session with new active project
   await updateActiveProject(projectId);
 
-  return successResponse({ 
+  return successResponse({
     message: 'Project switched successfully',
-    activeProjectId: projectId 
+    activeProjectId: projectId
   });
 });

@@ -1,7 +1,7 @@
 /**
  * Google OAuth Configuration and Utilities
  * Implements OAuth 2.0 flow for Google authentication
- * 
+ *
  * Requirements: 2.1, 2.2
  */
 
@@ -34,7 +34,7 @@ export interface GoogleUserInfo {
 /**
  * Generate the Google OAuth authorization URL
  * Redirects user to Google login page
- * 
+ *
  * @param state - Random state parameter for CSRF protection
  * @returns Authorization URL to redirect user to
  */
@@ -54,7 +54,7 @@ export function getGoogleAuthorizationUrl(state: string): string {
 
 /**
  * Exchange authorization code for access token
- * 
+ *
  * @param code - Authorization code from Google OAuth callback
  * @returns Access token response
  */
@@ -89,7 +89,7 @@ export async function exchangeCodeForToken(code: string): Promise<{
 
 /**
  * Fetch user information from Google using access token
- * 
+ *
  * @param accessToken - Access token from token exchange
  * @returns Google user information
  */
@@ -112,7 +112,7 @@ export async function getGoogleUserInfo(
 
 /**
  * Generate a random state parameter for CSRF protection
- * 
+ *
  * @returns Random state string
  */
 export function generateState(): string {

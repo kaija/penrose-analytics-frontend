@@ -1,13 +1,13 @@
 /**
  * ID Mapping Utility
- * 
+ *
  * High-performance ID resolution system for mapping various identifier types
  * (email, IDFA, session, cookie, device_id) to unified profile IDs.
  */
 
 import { prisma } from './prisma';
 
-export type IdType = 
+export type IdType =
   | 'email'
   | 'idfa'
   | 'idfv'
@@ -203,14 +203,14 @@ export async function getIdMappingStats(projectId: string) {
     prisma.idMapping.count({
       where: { projectId },
     }),
-    
+
     // Count by type
     prisma.idMapping.groupBy({
       by: ['idType'],
       where: { projectId },
       _count: true,
     }),
-    
+
     // Expired count
     prisma.idMapping.count({
       where: {

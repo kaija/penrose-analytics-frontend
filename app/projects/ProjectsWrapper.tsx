@@ -17,10 +17,10 @@ interface ProjectsWrapperProps {
   isSuperAdmin: boolean;
 }
 
-export default function ProjectsWrapper({ 
-  projects, 
-  activeProjectId, 
-  isSuperAdmin 
+export default function ProjectsWrapper({
+  projects,
+  activeProjectId,
+  isSuperAdmin
 }: ProjectsWrapperProps) {
   return (
     <MainLayout>
@@ -34,8 +34,8 @@ export default function ProjectsWrapper({
           </p>
         </div>
 
-        <ProjectList 
-          projects={projects} 
+        <ProjectList
+          projects={projects}
           activeProjectId={activeProjectId}
           isSuperAdmin={isSuperAdmin}
         />

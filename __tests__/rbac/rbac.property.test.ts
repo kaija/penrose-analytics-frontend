@@ -1,6 +1,6 @@
 /**
  * Property-based tests for RBAC permission system
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -49,10 +49,10 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Property 6: Owner Role Permissions
-   * 
+   *
    * For any user with owner role in a project, all permission checks for actions
    * within that project must return true (full access granted).
-   * 
+   *
    * **Validates: Requirements 4.2**
    */
   test('Property 6: Owners have all permissions', async () => {
@@ -77,11 +77,11 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Property 7: Admin Role Permissions
-   * 
+   *
    * For any user with admin role in a project, permission checks must grant access
    * to member management, report/dashboard operations, and project settings,
    * but must deny project ownership transfer (project:delete).
-   * 
+   *
    * **Validates: Requirements 4.3, 4.4**
    */
   test('Property 7: Admins have correct permissions', async () => {
@@ -117,11 +117,11 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Property 8: Editor Role Permissions
-   * 
+   *
    * For any user with editor role in a project, permission checks must grant access
    * to report and dashboard CRUD operations and read access to profiles/events,
    * but must deny member management and project settings modifications.
-   * 
+   *
    * **Validates: Requirements 4.5, 4.6**
    */
   test('Property 8: Editors have correct permissions', async () => {
@@ -162,11 +162,11 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Property 9: Viewer Role Permissions
-   * 
+   *
    * For any user with viewer role in a project, permission checks must grant only
    * read access to reports, dashboards, profiles, and events, and must deny all
    * modification operations.
-   * 
+   *
    * **Validates: Requirements 4.7, 4.8**
    */
   test('Property 9: Viewers have read-only permissions', async () => {
@@ -212,10 +212,10 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Property 10: Unauthorized Action Rejection
-   * 
+   *
    * For any operation attempted by a user without required permissions,
    * the system must reject the operation and return an error.
-   * 
+   *
    * **Validates: Requirements 4.10, 19.3**
    */
   test('Property 10: Unauthorized actions are rejected', async () => {
@@ -265,7 +265,7 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Additional property: getRolePermissions consistency
-   * 
+   *
    * For any role, getRolePermissions should return exactly the permissions
    * defined in ROLE_PERMISSIONS for that role.
    */
@@ -293,7 +293,7 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Additional property: Permission hierarchy
-   * 
+   *
    * Owner should have all permissions that admin has, admin should have all
    * permissions that editor has, and editor should have all permissions that viewer has.
    */
@@ -321,7 +321,7 @@ describe('RBAC Permission System Property Tests', () => {
 
   /**
    * Additional property: Non-member has no permissions
-   * 
+   *
    * For any user who is not a member of a project, canPerformAction
    * should return false for all actions.
    */

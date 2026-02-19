@@ -1,8 +1,8 @@
 /**
  * Unit tests for super admin operations
- * 
+ *
  * Tests super admin path verification, OAuth requirement, and email allowlist checking
- * 
+ *
  * Validates: Requirements 13.1, 13.2, 13.3, 13.4
  */
 
@@ -36,7 +36,7 @@ describe('Super Admin Operations', () => {
   test('super admin path requires environment variable', () => {
     // Verify SUPER_ADMIN_PATH is required
     const superAdminPath = process.env.SUPER_ADMIN_PATH;
-    
+
     // The path should be defined in environment
     // In production, this would be a secret value
     expect(typeof superAdminPath).toBe('string');
@@ -45,7 +45,7 @@ describe('Super Admin Operations', () => {
   test('OAuth required for super admin access', async () => {
     // Super admin access requires authenticated user
     // This test verifies the user must exist in database (OAuth completed)
-    
+
     const user = await prisma.user.findUnique({
       where: { id: testUser.id },
     });
@@ -62,7 +62,7 @@ describe('Super Admin Operations', () => {
     // Test email in allowlist
     expect(allowlist).toContain('admin1@example.com');
     expect(allowlist).toContain('admin2@example.com');
-    
+
     // Test email not in allowlist
     expect(allowlist).not.toContain('user@example.com');
     expect(allowlist).not.toContain('admin@test.com');
@@ -89,7 +89,7 @@ describe('Super Admin Operations', () => {
 
   test('case-sensitive email matching', () => {
     const allowlist = ['Admin@Example.com'];
-    
+
     // Email matching should be case-sensitive or normalized
     // This test documents the expected behavior
     expect(allowlist).toContain('Admin@Example.com');
@@ -107,7 +107,7 @@ describe('Super Admin Operations', () => {
     try {
       // Super admin should be able to query all projects
       const projects = await prisma.project.findMany();
-      
+
       expect(projects.length).toBeGreaterThan(0);
       expect(projects.some(p => p.id === project.id)).toBe(true);
     } finally {
@@ -121,7 +121,7 @@ describe('Super Admin Operations', () => {
   test('super admin can list all users', async () => {
     // Super admin should be able to query all users
     const users = await prisma.user.findMany();
-    
+
     expect(users.length).toBeGreaterThan(0);
     expect(users.some(u => u.id === testUser.id)).toBe(true);
   });
@@ -150,7 +150,7 @@ describe('Super Admin Operations', () => {
           project: true,
         },
       });
-      
+
       expect(memberships.length).toBeGreaterThan(0);
       expect(memberships.some(m => m.id === membership.id)).toBe(true);
     } finally {

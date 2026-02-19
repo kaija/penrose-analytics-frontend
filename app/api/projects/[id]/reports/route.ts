@@ -1,9 +1,9 @@
 /**
  * Project Reports API Routes
- * 
+ *
  * POST /api/projects/[id]/reports - Create a new report
  * GET /api/projects/[id]/reports - List reports for a project
- * 
+ *
  * Requirements: 8.7, 8.8
  */
 
@@ -24,7 +24,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/projects/[id]/reports
  * Create a new report
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 8.7
  */
 export const POST = withErrorHandler(async (
@@ -78,7 +78,7 @@ export const POST = withErrorHandler(async (
  * GET /api/projects/[id]/reports
  * List all reports for a project
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 8.8
  */
 export const GET = withErrorHandler(async (

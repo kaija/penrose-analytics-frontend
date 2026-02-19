@@ -1,8 +1,8 @@
 /**
  * Event Detail API Routes
- * 
+ *
  * GET /api/events/[id] - Get event details
- * 
+ *
  * Requirements: 11.4
  */
 
@@ -20,7 +20,7 @@ import {
  * GET /api/events/[id]
  * Get event details
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 11.4
  */
 export const GET = withErrorHandler(async (

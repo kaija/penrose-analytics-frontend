@@ -1,6 +1,6 @@
 /**
  * Property-based tests for event management
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -30,10 +30,10 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Property 16: Event Filtering
-   * 
+   *
    * For any event query with filters (event name, time range, user ID), all returned
    * events must match all specified filter criteria.
-   * 
+   *
    * **Validates: Requirements 11.5**
    */
   test('Property 16: Event filtering returns matching results', async () => {
@@ -60,9 +60,9 @@ describe('Event Management Property Tests', () => {
         async (projectId, eventName, userId, startDate, endDate, page, pageSize, allEvents) => {
           // Clear mocks for this iteration
           jest.clearAllMocks();
-          
+
           const now = new Date();
-          
+
           // Build filters
           const filters: EventFilters = {};
           if (eventName) filters.eventName = eventName;
@@ -98,7 +98,7 @@ describe('Event Management Property Tests', () => {
             if (matchingProfile) {
               userProfileId = matchingProfile.profileId;
               matchingEvents = matchingEvents.filter(e => e.profileId === userProfileId);
-              
+
               // Mock profile lookup
               (prisma.profile.findFirst as jest.Mock).mockResolvedValue({
                 id: userProfileId,
@@ -172,7 +172,7 @@ describe('Event Management Property Tests', () => {
           if (userId) {
             // Profile lookup is always attempted when userId filter is used
             expect(prisma.profile.findFirst).toHaveBeenCalled();
-            
+
             if (profileFound) {
               // If profile was found, event queries should be called
               expect(prisma.event.count).toHaveBeenCalled();
@@ -196,7 +196,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: Empty filters return all events
-   * 
+   *
    * For any project, querying without filters should return all events
    * in that project (subject to pagination).
    */
@@ -238,7 +238,7 @@ describe('Event Management Property Tests', () => {
           // Should return events from the project
           expect(result.total).toBe(mockEvents.length);
           expect(result.events).toHaveLength(paginatedEvents.length);
-          
+
           // All returned events should belong to the project
           for (const event of result.events) {
             expect(event.projectId).toBe(projectId);
@@ -251,7 +251,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: Multiple filters are combined with AND logic
-   * 
+   *
    * When multiple filters are specified, events must match ALL filters.
    */
   test('Property: Multiple filters use AND logic', async () => {
@@ -317,7 +317,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: Date range filtering is inclusive
-   * 
+   *
    * Events with timestamps exactly equal to startDate or endDate should be included.
    */
   test('Property: Date range filtering is inclusive', async () => {
@@ -327,7 +327,7 @@ describe('Event Management Property Tests', () => {
         fc.date({ min: new Date('2020-01-01'), max: new Date('2025-12-31') }), // boundary date
         async (projectId, boundaryDate) => {
           const now = new Date();
-          
+
           // Create events at the boundary
           const eventAtBoundary = {
             id: 'event-boundary',
@@ -372,7 +372,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: User ID filter with non-existent user returns empty results
-   * 
+   *
    * When filtering by a userId that doesn't exist, the result should be empty.
    */
   test('Property: Non-existent userId returns empty results', async () => {
@@ -413,7 +413,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: Pagination consistency
-   * 
+   *
    * For any query, the sum of events across all pages should equal the total count.
    */
   test('Property: Pagination is consistent with total count', async () => {
@@ -424,7 +424,7 @@ describe('Event Management Property Tests', () => {
         fc.integer({ min: 5, max: 20 }), // pageSize
         async (projectId, totalEvents, pageSize) => {
           const now = new Date();
-          
+
           // Create mock events
           const mockEvents = Array.from({ length: totalEvents }, (_, i) => ({
             id: `event-${i}`,
@@ -455,7 +455,7 @@ describe('Event Management Property Tests', () => {
             expect(result.total).toBe(totalEvents);
             expect(result.page).toBe(page);
             expect(result.pageSize).toBe(pageSize);
-            
+
             totalRetrieved += result.events.length;
 
             // Last page might have fewer events
@@ -477,7 +477,7 @@ describe('Event Management Property Tests', () => {
 
   /**
    * Additional property: Events are ordered by timestamp descending
-   * 
+   *
    * For any query, returned events should be ordered from newest to oldest.
    */
   test('Property: Events are ordered by timestamp descending', async () => {
@@ -506,7 +506,7 @@ describe('Event Management Property Tests', () => {
           }));
 
           // Sort by timestamp descending (newest first)
-          const sortedEvents = [...mockEvents].sort((a, b) => 
+          const sortedEvents = [...mockEvents].sort((a, b) =>
             b.timestamp.getTime() - a.timestamp.getTime()
           );
 

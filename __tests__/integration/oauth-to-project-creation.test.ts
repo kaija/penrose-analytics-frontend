@@ -1,9 +1,9 @@
 /**
  * Integration Test: OAuth → Project Creation Flow
- * 
+ *
  * Tests the complete flow from OAuth authentication through project creation
  * for both new and returning users.
- * 
+ *
  * Requirements: 2.1-2.10, 3.1-3.4, 15.1-15.5
  */
 

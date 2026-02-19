@@ -1,8 +1,8 @@
 /**
  * Profile Detail API Routes
- * 
+ *
  * GET /api/profiles/[id] - Get a profile with events
- * 
+ *
  * Requirements: 10.4, 10.5, 10.6
  */
 
@@ -21,7 +21,7 @@ import { prisma } from '@/lib/prisma';
  * GET /api/profiles/[id]
  * Get a profile with its events
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 10.4, 10.5, 10.6
  */
 export const GET = withErrorHandler(async (

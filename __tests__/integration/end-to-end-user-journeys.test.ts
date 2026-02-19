@@ -1,9 +1,9 @@
 /**
  * End-to-End Test: Complete User Journeys
- * 
+ *
  * Tests complete user flows from signup through daily usage scenarios.
  * These tests validate the entire system working together as users would experience it.
- * 
+ *
  * Task: 30.2 End-to-end testing
  * Requirements: All
  */

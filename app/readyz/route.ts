@@ -4,14 +4,14 @@ import { prisma } from '@/lib/prisma';
 /**
  * Readiness probe endpoint for Kubernetes
  * Returns HTTP 200 if the database connection is healthy
- * 
+ *
  * Requirements: 1.9, 1.11
  */
 export async function GET() {
   try {
     // Check database connectivity by executing a simple query
     await prisma.$queryRaw`SELECT 1`;
-    
+
     return NextResponse.json(
       {
         healthy: true,

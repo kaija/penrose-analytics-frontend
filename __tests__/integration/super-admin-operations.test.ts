@@ -1,10 +1,10 @@
 /**
  * Integration Test: Super Admin Operations
- * 
+ *
  * Tests the complete flow of super admin access control and operations
  * including verification, project management, user management, and
  * cross-project operations.
- * 
+ *
  * Requirements: 13.1-13.13
  */
 

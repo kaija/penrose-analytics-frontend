@@ -1,8 +1,8 @@
 /**
  * Dashboard API Routes Tests
- * 
+ *
  * Tests for dashboard CRUD operations via API routes
- * 
+ *
  * Requirements: 7.1, 7.9, 7.10
  */
 

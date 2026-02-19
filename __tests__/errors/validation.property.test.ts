@@ -1,9 +1,9 @@
 /**
  * Property-based tests for input validation errors
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
- * 
+ *
  * Tests that the system returns validation errors with specific field-level messages
  * for any request with invalid input data (missing required fields, wrong types, constraint violations).
  */
@@ -22,11 +22,11 @@ import {
 describe('Input Validation Property Tests', () => {
   /**
    * Property 25: Input Validation Errors
-   * 
-   * For any request with invalid input data (missing required fields, wrong types, 
-   * constraint violations), the system must return validation errors with specific 
+   *
+   * For any request with invalid input data (missing required fields, wrong types,
+   * constraint violations), the system must return validation errors with specific
    * field-level messages.
-   * 
+   *
    * **Validates: Requirements 19.1**
    */
   describe('Property 25: Input validation errors', () => {
@@ -40,14 +40,14 @@ describe('Input Validation Property Tests', () => {
             const safeFields = requiredFields.filter(
               field => !['__proto__', 'constructor', 'prototype', 'toString', 'valueOf'].includes(field)
             );
-            
+
             if (safeFields.length === 0) {
               return; // Skip if no safe fields
             }
-            
+
             // Ensure field names are unique
             const uniqueFields = [...new Set(safeFields)];
-            
+
             try {
               validateRequiredFields(data, uniqueFields);
               // If no error thrown, all fields must have been present (shouldn't happen with empty object)
@@ -56,11 +56,11 @@ describe('Input Validation Property Tests', () => {
               // Requirement 19.1: System must return validation errors
               expect(error).toBeInstanceOf(ValidationError);
               const validationError = error as ValidationError;
-              
+
               // Requirement 19.1: Errors must have specific field-level messages
               expect(validationError.fields).toBeDefined();
               expect(typeof validationError.fields).toBe('object');
-              
+
               // Each missing field should have an error message
               for (const field of uniqueFields) {
                 expect(validationError.fields[field]).toBeDefined();
@@ -69,13 +69,13 @@ describe('Input Validation Property Tests', () => {
                 // Message should mention the field name
                 expect(validationError.fields[field].toLowerCase()).toContain(field.toLowerCase());
               }
-              
+
               // HTTP status code should be 400
               expect(validationError.statusCode).toBe(400);
-              
+
               // Error should be operational
               expect(validationError.isOperational).toBe(true);
-              
+
               // Format error response and verify structure
               const response = formatErrorResponse(validationError, false);
               expect(response.error.statusCode).toBe(400);
@@ -101,21 +101,21 @@ describe('Input Validation Property Tests', () => {
             fc.array(fc.anything()),
             fc.object()
           ), // actual value (may not match expected type)
-          fc.string({ minLength: 1, maxLength: 50 }).filter(name => 
+          fc.string({ minLength: 1, maxLength: 50 }).filter(name =>
             name !== '__proto__' && name !== 'constructor' && name !== 'prototype'
           ), // field name
           async (expectedType, value, fieldName) => {
             const data = { [fieldName]: value };
             const fieldTypes = { [fieldName]: expectedType };
-            
+
             const actualType = typeof value;
-            
+
             // Skip if value is null/undefined (validateFieldTypes skips these)
             if (value === null || value === undefined) {
               validateFieldTypes(data, fieldTypes);
               return;
             }
-            
+
             if (actualType !== expectedType) {
               try {
                 validateFieldTypes(data, fieldTypes);
@@ -124,20 +124,20 @@ describe('Input Validation Property Tests', () => {
                 // Requirement 19.1: System must return validation errors
                 expect(error).toBeInstanceOf(ValidationError);
                 const validationError = error as ValidationError;
-                
+
                 // Requirement 19.1: Errors must have specific field-level messages
                 expect(validationError.fields).toBeDefined();
                 expect(validationError.fields[fieldName]).toBeDefined();
                 expect(typeof validationError.fields[fieldName]).toBe('string');
-                
+
                 // Message should mention the field name and expected type
                 const message = validationError.fields[fieldName].toLowerCase();
                 expect(message).toContain(fieldName.toLowerCase());
                 expect(message).toContain(expectedType);
-                
+
                 // HTTP status code should be 400
                 expect(validationError.statusCode).toBe(400);
-                
+
                 // Format error response and verify structure
                 const response = formatErrorResponse(validationError, false);
                 expect(response.error.statusCode).toBe(400);
@@ -164,14 +164,14 @@ describe('Input Validation Property Tests', () => {
             // Ensure min <= max
             const min = Math.min(minLength, maxLength);
             const max = Math.max(minLength, maxLength);
-            
+
             const fieldName = 'testField';
             const data = { [fieldName]: value };
             const constraints = { [fieldName]: { min, max } };
-            
+
             const isTooShort = value.length < min;
             const isTooLong = value.length > max;
-            
+
             if (isTooShort || isTooLong) {
               try {
                 validateStringLength(data, constraints);
@@ -180,16 +180,16 @@ describe('Input Validation Property Tests', () => {
                 // Requirement 19.1: System must return validation errors
                 expect(error).toBeInstanceOf(ValidationError);
                 const validationError = error as ValidationError;
-                
+
                 // Requirement 19.1: Errors must have specific field-level messages
                 expect(validationError.fields).toBeDefined();
                 expect(validationError.fields[fieldName]).toBeDefined();
                 expect(typeof validationError.fields[fieldName]).toBe('string');
-                
+
                 // Message should mention the field name and constraint
                 const message = validationError.fields[fieldName].toLowerCase();
                 expect(message).toContain(fieldName.toLowerCase());
-                
+
                 if (isTooShort) {
                   expect(message).toContain('at least');
                   expect(message).toContain(min.toString());
@@ -197,10 +197,10 @@ describe('Input Validation Property Tests', () => {
                   expect(message).toContain('less than');
                   expect(message).toContain(max.toString());
                 }
-                
+
                 // HTTP status code should be 400
                 expect(validationError.statusCode).toBe(400);
-                
+
                 // Format error response and verify structure
                 const response = formatErrorResponse(validationError, false);
                 expect(response.error.statusCode).toBe(400);
@@ -225,7 +225,7 @@ describe('Input Validation Property Tests', () => {
             // Simple email regex (same as in errors.ts)
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const isValidEmail = emailRegex.test(emailValue);
-            
+
             if (!isValidEmail) {
               try {
                 validateEmail(emailValue, fieldName);
@@ -234,19 +234,19 @@ describe('Input Validation Property Tests', () => {
                 // Requirement 19.1: System must return validation errors
                 expect(error).toBeInstanceOf(ValidationError);
                 const validationError = error as ValidationError;
-                
+
                 // Requirement 19.1: Errors must have specific field-level messages
                 expect(validationError.fields).toBeDefined();
                 expect(validationError.fields[fieldName]).toBeDefined();
                 expect(typeof validationError.fields[fieldName]).toBe('string');
-                
+
                 // Message should indicate invalid email
                 const message = validationError.fields[fieldName].toLowerCase();
                 expect(message).toContain('email');
-                
+
                 // HTTP status code should be 400
                 expect(validationError.statusCode).toBe(400);
-                
+
                 // Format error response and verify structure
                 const response = formatErrorResponse(validationError, false);
                 expect(response.error.statusCode).toBe(400);
@@ -278,28 +278,28 @@ describe('Input Validation Property Tests', () => {
               (error, index, self) =>
                 index === self.findIndex((e) => e.field === error.field)
             );
-            
+
             if (uniqueErrors.length < 2) {
               return; // Skip if we don't have at least 2 unique errors
             }
-            
+
             const validationError = createValidationError(uniqueErrors);
-            
+
             // Requirement 19.1: System must return validation errors
             expect(validationError).toBeInstanceOf(ValidationError);
-            
+
             // Requirement 19.1: Errors must have specific field-level messages
             expect(validationError.fields).toBeDefined();
             expect(Object.keys(validationError.fields).length).toBe(uniqueErrors.length);
-            
+
             // Each field should have its corresponding error message
             for (const { field, message } of uniqueErrors) {
               expect(validationError.fields[field]).toBe(message);
             }
-            
+
             // HTTP status code should be 400
             expect(validationError.statusCode).toBe(400);
-            
+
             // Format error response and verify all fields are included
             const response = formatErrorResponse(validationError, false);
             expect(response.error.statusCode).toBe(400);
@@ -321,27 +321,27 @@ describe('Input Validation Property Tests', () => {
           ), // field errors
           async (message, fields) => {
             const validationError = new ValidationError(message, fields);
-            
+
             // Validation errors should be operational
             expect(validationError.isOperational).toBe(true);
-            
+
             // Validation errors should have HTTP 400 status
             expect(validationError.statusCode).toBe(400);
-            
+
             // Format error response for non-admin user
             const response = formatErrorResponse(validationError, false);
-            
+
             // Message should be exposed to non-admin users (operational error)
             expect(response.error.message).toBe(message);
-            
+
             // Fields should be included in response
             if (Object.keys(fields).length > 0) {
               expect(response.error.fields).toEqual(fields);
             }
-            
+
             // Status code should be 400
             expect(response.error.statusCode).toBe(400);
-            
+
             // Error code should be ValidationError
             expect(response.error.code).toBe('ValidationError');
           }
@@ -366,31 +366,31 @@ describe('Input Validation Property Tests', () => {
               (error, index, self) =>
                 index === self.findIndex((e) => e.field === error.field)
             );
-            
+
             if (uniqueErrors.length === 0) {
               return;
             }
-            
+
             const validationError = createValidationError(uniqueErrors);
             const response = formatErrorResponse(validationError, false);
-            
+
             // Response must have error object
             expect(response.error).toBeDefined();
-            
+
             // Error object must have required fields
             expect(response.error.message).toBeDefined();
             expect(typeof response.error.message).toBe('string');
-            
+
             expect(response.error.code).toBeDefined();
             expect(response.error.code).toBe('ValidationError');
-            
+
             expect(response.error.statusCode).toBeDefined();
             expect(response.error.statusCode).toBe(400);
-            
+
             // Fields must be present for validation errors
             expect(response.error.fields).toBeDefined();
             expect(typeof response.error.fields).toBe('object');
-            
+
             // All field errors must be included
             for (const { field, message } of uniqueErrors) {
               expect(response.error.fields![field]).toBe(message);

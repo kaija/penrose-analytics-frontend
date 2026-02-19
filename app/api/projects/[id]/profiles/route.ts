@@ -1,9 +1,9 @@
 /**
  * Project Profiles API Routes
- * 
+ *
  * POST /api/projects/[id]/profiles - Upsert a profile
  * GET /api/projects/[id]/profiles - Search profiles
- * 
+ *
  * Requirements: 10.1, 10.2, 10.3, 10.7
  */
 
@@ -25,7 +25,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/projects/[id]/profiles
  * Upsert a profile (create or update)
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 10.1, 10.2
  */
 export const POST = withErrorHandler(async (
@@ -83,7 +83,7 @@ export const POST = withErrorHandler(async (
  * GET /api/projects/[id]/profiles
  * Search profiles in a project
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 10.3, 10.7
  */
 export const GET = withErrorHandler(async (

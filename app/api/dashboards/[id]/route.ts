@@ -1,9 +1,9 @@
 /**
  * Dashboard Detail API Routes
- * 
+ *
  * PUT /api/dashboards/[id] - Update a dashboard
  * DELETE /api/dashboards/[id] - Delete a dashboard
- * 
+ *
  * Requirements: 7.10
  */
 
@@ -22,7 +22,7 @@ import {
  * PUT /api/dashboards/[id]
  * Update a dashboard
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 7.10
  */
 export const PUT = withErrorHandler(async (
@@ -73,7 +73,7 @@ export const PUT = withErrorHandler(async (
  * DELETE /api/dashboards/[id]
  * Delete a dashboard
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 7.10
  */
 export const DELETE = withErrorHandler(async (

@@ -1,6 +1,6 @@
 /**
  * Unit tests for logout functionality
- * 
+ *
  * Requirements: 2.10, 15.5
  */
 
@@ -18,7 +18,7 @@ describe('Logout Route', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create mock request
     mockRequest = {
       url: 'http://localhost:3000/api/auth/logout',

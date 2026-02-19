@@ -1,6 +1,6 @@
 /**
  * Unit tests for /readyz readiness probe endpoint
- * 
+ *
  * Requirements: 1.9, 1.11
  */
 
@@ -33,7 +33,7 @@ describe('GET /readyz', () => {
 
     const response = await GET();
     const data = await response.json();
-    
+
     expect(data.healthy).toBe(true);
   });
 
@@ -43,7 +43,7 @@ describe('GET /readyz', () => {
 
     const response = await GET();
     const data = await response.json();
-    
+
     expect(data.checks).toBeDefined();
     expect(data.checks).toHaveLength(1);
     expect(data.checks[0]).toEqual({
@@ -70,7 +70,7 @@ describe('GET /readyz', () => {
 
     const response = await GET();
     const data = await response.json();
-    
+
     expect(data.healthy).toBe(false);
   });
 
@@ -83,7 +83,7 @@ describe('GET /readyz', () => {
 
     const response = await GET();
     const data = await response.json();
-    
+
     expect(data.checks).toBeDefined();
     expect(data.checks).toHaveLength(1);
     expect(data.checks[0]).toEqual({

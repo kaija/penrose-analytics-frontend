@@ -52,7 +52,7 @@ export interface SendEmailResult {
 
 /**
  * Send an email with retry logic for failed deliveries
- * 
+ *
  * @param options - Email options (to, subject, text, html)
  * @param retryCount - Current retry attempt (internal use)
  * @returns Promise with send result
@@ -63,7 +63,7 @@ export async function sendEmail(
 ): Promise<SendEmailResult> {
   try {
     const transport = getTransporter();
-    
+
     const info = await transport.sendMail({
       from: getSMTPFrom(),
       to: options.to,
@@ -87,7 +87,7 @@ export async function sendEmail(
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    
+
     // Only log in non-test environments
     if (process.env.NODE_ENV !== 'test') {
       console.error('Email delivery failed:', {
@@ -101,15 +101,15 @@ export async function sendEmail(
     // If we haven't exceeded max retries, schedule a retry
     if (retryCount < MAX_RETRIES) {
       const delay = RETRY_DELAYS[retryCount];
-      
+
       // Only log in non-test environments
       if (process.env.NODE_ENV !== 'test') {
         console.log(`Scheduling email retry ${retryCount + 1}/${MAX_RETRIES} in ${delay}ms`);
       }
-      
+
       // Wait for the delay period
       await new Promise(resolve => setTimeout(resolve, delay));
-      
+
       // Retry the send
       return sendEmail(options, retryCount + 1);
     }
@@ -132,7 +132,7 @@ export async function sendEmail(
 
 /**
  * Verify SMTP connection configuration
- * 
+ *
  * @returns Promise that resolves if connection is successful
  */
 export async function verifyEmailConnection(): Promise<boolean> {

@@ -1,6 +1,6 @@
 /**
  * Unit tests for session management utilities
- * 
+ *
  * Requirements: 2.6, 2.7, 2.8, 2.9, 15.2, 15.3, 15.4, 15.5
  */
 
@@ -25,7 +25,7 @@ describe('Session Management', () => {
   beforeEach(() => {
     // Reset mocks before each test
     jest.clearAllMocks();
-    
+
     // Create mock session object
     mockSession = {
       userId: undefined,
@@ -43,7 +43,7 @@ describe('Session Management', () => {
 
     // Mock cookies() to return our mock store
     (cookies as jest.Mock).mockResolvedValue(mockCookieStore);
-    
+
     // Mock getIronSession to return our mock session
     (getIronSession as jest.Mock).mockResolvedValue(mockSession);
   });

@@ -1,6 +1,6 @@
 /**
  * Property-based tests for session management
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -27,7 +27,7 @@ describe('Session Management Property Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockSession = {
       userId: undefined,
       activeProjectId: undefined,
@@ -42,7 +42,7 @@ describe('Session Management Property Tests', () => {
     };
 
     (cookies as jest.Mock).mockResolvedValue(mockCookieStore);
-    
+
     // Capture session options when getIronSession is called
     (getIronSession as jest.Mock).mockImplementation((store, options) => {
       sessionOptions = options;
@@ -52,12 +52,12 @@ describe('Session Management Property Tests', () => {
 
   /**
    * Property 1: Session Cookie Security Attributes
-   * 
+   *
    * For any session cookie created by the system, the cookie must have:
    * - httpOnly flag set to true
    * - sameSite attribute set to 'lax'
    * - secure flag set to true in production environments
-   * 
+   *
    * **Validates: Requirements 2.6, 2.8, 15.2**
    */
   test('Property 1: Session cookies have correct security attributes', async () => {
@@ -77,11 +77,11 @@ describe('Session Management Property Tests', () => {
           // Requirement 2.6 & 15.2: httpOnly flag must be true
           // This prevents client-side JavaScript from accessing the session cookie
           expect(sessionOptions.cookieOptions.httpOnly).toBe(true);
-          
+
           // Requirement 2.8: sameSite attribute must be 'lax'
           // This provides CSRF protection while allowing normal navigation
           expect(sessionOptions.cookieOptions.sameSite).toBe('lax');
-          
+
           // Requirement 2.7: secure flag must be true in production
           // This ensures cookies are only sent over HTTPS in production
           if (process.env.NODE_ENV === 'production') {
@@ -100,10 +100,10 @@ describe('Session Management Property Tests', () => {
 
   /**
    * Property 2: Session Content Completeness
-   * 
+   *
    * For any successful authentication, the created session must contain both
    * userId and activeProjectId fields (activeProjectId may be null for first-time users).
-   * 
+   *
    * **Validates: Requirements 2.9, 15.1**
    */
   test('Property 2: Sessions contain userId and activeProjectId', async () => {
@@ -137,11 +137,11 @@ describe('Session Management Property Tests', () => {
 
   /**
    * Property 19: Session Validation
-   * 
+   *
    * For any incoming request with a session cookie, the system must validate
    * the session on the server, and if invalid or expired, must redirect to
    * the login page (represented here by returning null).
-   * 
+   *
    * **Validates: Requirements 15.3, 15.4**
    */
   test('Property 19: Invalid sessions return null', async () => {
@@ -176,7 +176,7 @@ describe('Session Management Property Tests', () => {
 
   /**
    * Additional property: Session destruction clears all data
-   * 
+   *
    * For any session, calling destroySession must clear the session data.
    */
   test('Property: Session destruction is idempotent', async () => {
@@ -191,7 +191,7 @@ describe('Session Management Property Tests', () => {
             save: jest.fn().mockResolvedValue(undefined),
             destroy: jest.fn(),
           };
-          
+
           (getIronSession as jest.Mock).mockResolvedValue(localMockSession);
 
           // Call destroy multiple times

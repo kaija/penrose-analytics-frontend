@@ -3,7 +3,7 @@
 /**
  * Invitation Modal Component
  * Handles sending and managing project invitations
- * 
+ *
  * Requirements: 5.1, 5.4, 5.10
  */
 
@@ -88,10 +88,10 @@ export default function InvitationModal({ projectId, onClose }: InvitationModalP
       setSuccess(`Invitation sent to ${email}`);
       setEmail('');
       setRole('viewer');
-      
+
       // Reload pending invitations
       await loadPendingInvitations();
-      
+
       // Refresh the parent page to show updated member list
       router.refresh();
     } catch (err) {
@@ -212,7 +212,7 @@ export default function InvitationModal({ projectId, onClose }: InvitationModalP
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Pending Invitations
             </h3>
-            
+
             {loadingInvitations ? (
               <p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
             ) : pendingInvitations.length === 0 ? (
@@ -231,7 +231,7 @@ export default function InvitationModal({ projectId, onClose }: InvitationModalP
                         {invitation.invitedEmail}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Role: <span className="capitalize">{invitation.role}</span> • 
+                        Role: <span className="capitalize">{invitation.role}</span> •
                         Expires: {new Date(invitation.expiresAt).toLocaleDateString()}
                       </p>
                     </div>

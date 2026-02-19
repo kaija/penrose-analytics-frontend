@@ -33,15 +33,15 @@ describe('ThemeToggle', () => {
     );
 
     const button = screen.getByRole('button', { name: /toggle theme/i });
-    
+
     // Initially light theme
     expect(document.documentElement.classList.contains('dark')).toBe(false);
-    
+
     // Click to toggle to dark
     fireEvent.click(button);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(localStorage.getItem('theme')).toBe('dark');
-    
+
     // Click to toggle back to light
     fireEvent.click(button);
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -56,14 +56,14 @@ describe('ThemeToggle', () => {
     );
 
     const button = screen.getByRole('button', { name: /toggle theme/i });
-    
+
     fireEvent.click(button);
     expect(localStorage.getItem('theme')).toBe('dark');
   });
 
   it('loads saved theme from localStorage on mount', () => {
     localStorage.setItem('theme', 'dark');
-    
+
     render(
       <ThemeProvider>
         <ThemeToggle />

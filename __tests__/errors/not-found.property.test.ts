@@ -1,9 +1,9 @@
 /**
  * Property-based tests for resource not found errors
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
- * 
+ *
  * Tests that the system returns HTTP 404 with an explanation for any request
  * for a non-existent resource (project, user, dashboard, report).
  */
@@ -20,10 +20,10 @@ import { validateInvitationToken } from '@/lib/invitation';
 describe('Resource Not Found Property Tests', () => {
   /**
    * Property 26: Resource Not Found Errors
-   * 
+   *
    * For any request for a non-existent resource (project, user, dashboard, report),
    * the system must return HTTP 404 with an explanation.
-   * 
+   *
    * **Validates: Requirements 19.4**
    */
   describe('Property 26: Resource not found errors', () => {
@@ -34,28 +34,28 @@ describe('Resource Not Found Property Tests', () => {
           async (resourceType) => {
             // Create a NotFoundError for the resource type
             const error = new NotFoundError(resourceType);
-            
+
             // Requirement 19.4: System must return HTTP 404
             expect(error.statusCode).toBe(404);
-            
+
             // Requirement 19.4: Error must include explanation
             expect(error.message).toBeDefined();
             expect(error.message).toContain(resourceType);
             expect(error.message).toContain('not found');
-            
+
             // Error should be operational (safe to expose to users)
             expect(error.isOperational).toBe(true);
-            
+
             // Format error response
             const response = formatErrorResponse(error, false);
-            
+
             // Response must have HTTP 404 status
             expect(response.error.statusCode).toBe(404);
-            
+
             // Response must include explanation message
             expect(response.error.message).toBeDefined();
             expect(response.error.message).toContain('not found');
-            
+
             // Response must have NotFoundError code
             expect(response.error.code).toBe('NotFoundError');
           }
@@ -72,10 +72,10 @@ describe('Resource Not Found Property Tests', () => {
           async (userId, projectId) => {
             // Query for a membership that doesn't exist
             const role = await getUserRole(userId, projectId);
-            
+
             // Requirement 19.4: Non-existent resource returns null/not found indicator
             expect(role).toBeNull();
-            
+
             // Check access also returns false
             const hasAccess = await hasProjectAccess(userId, projectId);
             expect(hasAccess).toBe(false);
@@ -92,7 +92,7 @@ describe('Resource Not Found Property Tests', () => {
           async (token) => {
             // Query for an invitation that doesn't exist
             const invitation = await validateInvitationToken(token);
-            
+
             // Requirement 19.4: Non-existent resource returns null/not found indicator
             expect(invitation).toBeNull();
           }
@@ -107,13 +107,13 @@ describe('Resource Not Found Property Tests', () => {
           fc.string({ minLength: 1, maxLength: 50 }), // resource name
           async (resourceName) => {
             const error = new NotFoundError(resourceName);
-            
+
             // Message should follow pattern: "{Resource} not found"
             expect(error.message).toBe(`${resourceName} not found`);
-            
+
             // HTTP status should always be 404
             expect(error.statusCode).toBe(404);
-            
+
             // Format response and verify consistency
             const response = formatErrorResponse(error, false);
             expect(response.error.statusCode).toBe(404);
@@ -131,11 +131,11 @@ describe('Resource Not Found Property Tests', () => {
           fc.constant(undefined), // no resource name provided
           async () => {
             const error = new NotFoundError();
-            
+
             // Should use default "Resource" name
             expect(error.message).toBe('Resource not found');
             expect(error.statusCode).toBe(404);
-            
+
             const response = formatErrorResponse(error, false);
             expect(response.error.statusCode).toBe(404);
             expect(response.error.message).toBe('Resource not found');
@@ -153,13 +153,13 @@ describe('Resource Not Found Property Tests', () => {
           fc.boolean(), // isAdmin flag
           async (resourceType, isAdmin) => {
             const error = new NotFoundError(resourceType);
-            
+
             // NotFoundError is operational and should be exposed to all users
             expect(error.isOperational).toBe(true);
-            
+
             // Format response for both admin and non-admin
             const response = formatErrorResponse(error, isAdmin);
-            
+
             // Message should be the same for both admin and non-admin
             // (operational errors are safe to expose)
             expect(response.error.message).toBe(`${resourceType} not found`);
@@ -185,13 +185,13 @@ describe('Resource Not Found Property Tests', () => {
                 this.code = code;
               }
             }
-            
+
             // Simulate Prisma P2025 error (record not found)
             const prismaError = new PrismaClientKnownRequestError('Record not found', 'P2025');
-            
+
             // Format the Prisma error
             const response = formatErrorResponse(prismaError, false);
-            
+
             // Requirement 19.4: Prisma not found errors should map to HTTP 404
             expect(response.error.statusCode).toBe(404);
             expect(response.error.message).toContain('not found');
@@ -216,13 +216,13 @@ describe('Resource Not Found Property Tests', () => {
                 this.code = code;
               }
             }
-            
+
             // Simulate Prisma P2003 error (foreign key constraint violation)
             const prismaError = new PrismaClientKnownRequestError('Foreign key constraint failed', 'P2003');
-            
+
             // Format the Prisma error
             const response = formatErrorResponse(prismaError, false);
-            
+
             // Requirement 19.4: Foreign key violations indicate referenced resource not found
             expect(response.error.statusCode).toBe(404);
             expect(response.error.message).toBe('Referenced resource not found');
@@ -240,21 +240,21 @@ describe('Resource Not Found Property Tests', () => {
           async (resourceType) => {
             const error = new NotFoundError(resourceType);
             const response = formatErrorResponse(error, false);
-            
+
             // Response must have error object
             expect(response.error).toBeDefined();
-            
+
             // Error object must have required fields
             expect(response.error.message).toBeDefined();
             expect(typeof response.error.message).toBe('string');
             expect(response.error.message.length).toBeGreaterThan(0);
-            
+
             expect(response.error.code).toBeDefined();
             expect(response.error.code).toBe('NotFoundError');
-            
+
             expect(response.error.statusCode).toBeDefined();
             expect(response.error.statusCode).toBe(404);
-            
+
             // NotFoundError should not have fields (that's for validation errors)
             expect(response.error.fields).toBeUndefined();
           }
@@ -272,13 +272,13 @@ describe('Resource Not Found Property Tests', () => {
           ),
           async (resourceTypes) => {
             const errors = resourceTypes.map(type => new NotFoundError(type));
-            
+
             // All errors should have HTTP 404
             for (const error of errors) {
               expect(error.statusCode).toBe(404);
               expect(error.isOperational).toBe(true);
             }
-            
+
             // All formatted responses should have HTTP 404
             const responses = errors.map(err => formatErrorResponse(err, false));
             for (const response of responses) {

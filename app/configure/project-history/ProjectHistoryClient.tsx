@@ -139,10 +139,10 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await fetch(`/api/projects/${projectId}/audit-logs?limit=100`);
       if (!res.ok) throw new Error('Failed to load audit logs');
-      
+
       const data = await res.json();
       setAllLogs(data.data.logs);
       setLogs(data.data.logs);
@@ -154,8 +154,8 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
   };
 
   const toggleFilter = (action: string) => {
-    setFilterActions(prev => 
-      prev.includes(action) 
+    setFilterActions(prev =>
+      prev.includes(action)
         ? prev.filter(a => a !== action)
         : [...prev, action]
     );
@@ -177,7 +177,7 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
     if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -235,7 +235,7 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
             )}
             {showFilters ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </button>
-          
+
           {filterActions.length > 0 && (
             <button
               onClick={clearFilters}
@@ -245,13 +245,13 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
             </button>
           )}
         </div>
-        
+
         {showFilters && (
           <div className="mt-4">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">
               Showing {logs.length} of {allLogs.length} logs
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Authentication */}
               <div>
@@ -468,7 +468,7 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
                       <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
                         {ACTION_LABELS[log.action] || log.action}
                       </span>
-                      
+
                       {log.details.resourceName && (
                         <span className="text-sm text-gray-600 dark:text-gray-400 truncate">
                           <span className="font-medium">{log.details.resourceName}</span>
@@ -479,7 +479,7 @@ export default function ProjectHistoryClient({ projectId }: ProjectHistoryClient
                           )}
                         </span>
                       )}
-                      
+
                       <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-auto">
                         <Calendar className="w-3 h-3" />
                         {formatTimestamp(log.timestamp)}

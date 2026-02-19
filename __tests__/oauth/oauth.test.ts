@@ -1,7 +1,7 @@
 /**
  * OAuth Configuration Tests
  * Tests for Google OAuth setup and utilities
- * 
+ *
  * Requirements: 2.1, 2.2
  */
 

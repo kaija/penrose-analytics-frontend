@@ -1,7 +1,7 @@
 /**
  * Invitation Acceptance Page
  * Displays invitation details and handles acceptance flow
- * 
+ *
  * Requirements: 5.5, 5.6, 5.7, 5.8, 5.9, 5.11
  */
 

@@ -1,11 +1,11 @@
 /**
  * Feature: prism
  * Property 17: Super Admin Access Control
- * 
- * For any access attempt to the super admin interface, the system must verify 
- * the authenticated user's email is in the SUPER_ADMIN_EMAILS allowlist, 
+ *
+ * For any access attempt to the super admin interface, the system must verify
+ * the authenticated user's email is in the SUPER_ADMIN_EMAILS allowlist,
  * and must deny access if not present.
- * 
+ *
  * Validates: Requirements 13.3, 13.4
  */
 
@@ -54,7 +54,7 @@ describe('Property 17: Super Admin Access Control', () => {
 
           try {
             // Simulate allowlist check
-            const normalizedAllowlist = allowlistEmails.map(e => 
+            const normalizedAllowlist = allowlistEmails.map(e =>
               `${e.split('@')[0]}@test-super-admin.com`
             );
             const isInAllowlist = normalizedAllowlist.includes(user.email);
@@ -121,7 +121,7 @@ describe('Property 17: Super Admin Access Control', () => {
         fc.emailAddress(),
         async (email) => {
           const normalizedEmail = `${email.split('@')[0]}@test-super-admin.com`;
-          
+
           // Create test user
           const user = await prisma.user.create({
             data: {
@@ -133,10 +133,10 @@ describe('Property 17: Super Admin Access Control', () => {
           try {
             // Allowlist with exact email
             const allowlist = [normalizedEmail];
-            
+
             // Verify exact match grants access
             expect(allowlist).toContain(user.email);
-            
+
             // Verify case-sensitive or modified email doesn't match
             const modifiedEmail = normalizedEmail.toUpperCase();
             if (modifiedEmail !== normalizedEmail) {

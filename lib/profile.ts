@@ -1,11 +1,11 @@
 /**
  * Profile Management Module
- * 
+ *
  * Handles customer profile operations including:
  * - Creating and updating profiles
  * - Searching profiles
  * - Retrieving profile details with events
- * 
+ *
  * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7
  */
 
@@ -67,12 +67,12 @@ export interface ProfileSearchFilters {
 
 /**
  * Create or update a profile (upsert)
- * 
+ *
  * @param projectId - The project ID
  * @param externalId - The external identifier for the profile
  * @param traits - Profile attributes/traits
  * @returns The created or updated profile
- * 
+ *
  * Requirements: 10.1, 10.2
  */
 export async function upsertProfile(
@@ -104,12 +104,12 @@ export async function upsertProfile(
 
 /**
  * Search profiles in a project
- * 
+ *
  * @param projectId - The project ID
  * @param filters - Search filters
  * @param pagination - Pagination parameters
  * @returns Paginated profiles
- * 
+ *
  * Requirements: 10.3, 10.7
  */
 export async function searchProfiles(
@@ -163,10 +163,10 @@ export async function searchProfiles(
 
 /**
  * Get a profile by ID
- * 
+ *
  * @param profileId - The profile ID
  * @returns The profile or null if not found
- * 
+ *
  * Requirements: 10.4
  */
 export async function getProfile(profileId: string): Promise<Profile | null> {
@@ -179,11 +179,11 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
 
 /**
  * Get a profile with its events
- * 
+ *
  * @param profileId - The profile ID
  * @returns The profile with events
  * @throws NotFoundError if profile not found
- * 
+ *
  * Requirements: 10.4, 10.5
  */
 export async function getProfileWithEvents(

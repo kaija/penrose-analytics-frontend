@@ -27,18 +27,18 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
   const loadWeeklyData = async () => {
     try {
       setLoading(true);
-      
+
       // Mock data - last 10 weeks
       const mockData: WeeklyData[] = [];
       const today = new Date();
-      
+
       for (let i = 9; i >= 0; i--) {
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - (i * 7));
-        
+
         const weekNum = getWeekNumber(weekStart);
         const month = weekStart.toLocaleDateString('en-US', { month: 'short' });
-        
+
         mockData.push({
           weekLabel: `${month} W${weekNum}`,
           weekStart: weekStart.toISOString().split('T')[0],
@@ -46,7 +46,7 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
           userCount: Math.floor(Math.random() * 5000) + 1000,
         });
       }
-      
+
       setWeeklyData(mockData);
     } catch (err) {
       console.error('Error loading weekly data:', err);
@@ -71,7 +71,7 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
   const allValues = [...weeklyData.map(d => d.eventCount), ...weeklyData.map(d => d.userCount)];
   const maxValue = allValues.length > 0 ? Math.max(...allValues) : 100;
   const minValue = 0;
-  
+
   // Generate Y-axis labels
   const yAxisMax = Math.ceil(maxValue * 1.1 / 10000) * 10000;
   const yAxisLabels = [
@@ -129,7 +129,7 @@ export default function ProjectStatusWrapper({ projectId }: ProjectStatusWrapper
                     {weeklyData.map((week) => {
                       const eventHeightPx = (week.eventCount / yAxisMax) * 320;
                       const userHeightPx = (week.userCount / yAxisMax) * 320;
-                      
+
                       return (
                         <div key={week.weekStart} className="flex-1 h-full flex items-end justify-center gap-0.5">
                           {/* User bar */}

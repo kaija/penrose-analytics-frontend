@@ -1,9 +1,9 @@
 /**
  * Event Module
- * 
+ *
  * Handles event tracking, storage, and querying operations.
  * Events represent user activity tracked within a project.
- * 
+ *
  * Requirements: 11.1, 11.2, 11.3, 11.4, 11.5
  */
 
@@ -48,14 +48,14 @@ export interface PaginatedEvents {
 
 /**
  * Track a new event
- * 
+ *
  * @param projectId - The project ID
  * @param profileId - The profile ID
  * @param eventName - The name of the event
  * @param payload - The event payload data
  * @param timestamp - Optional timestamp (defaults to now)
  * @returns The created event
- * 
+ *
  * Requirements: 11.1
  */
 export async function trackEvent(
@@ -110,12 +110,12 @@ export async function trackEvent(
 
 /**
  * Get events for a project with filters and pagination
- * 
+ *
  * @param projectId - The project ID
  * @param filters - Optional filters (eventName, userId, date range)
  * @param pagination - Pagination parameters
  * @returns Paginated events
- * 
+ *
  * Requirements: 11.2, 11.5
  */
 export async function getProjectEvents(
@@ -196,10 +196,10 @@ export async function getProjectEvents(
 
 /**
  * Get a single event by ID
- * 
+ *
  * @param eventId - The event ID
  * @returns The event or null if not found
- * 
+ *
  * Requirements: 11.4
  */
 export async function getEventById(eventId: string): Promise<{
@@ -232,11 +232,11 @@ export async function getEventById(eventId: string): Promise<{
 
 /**
  * Get events for a specific profile
- * 
+ *
  * @param profileId - The profile ID
  * @param pagination - Pagination parameters
  * @returns Paginated events
- * 
+ *
  * Requirements: 10.5
  */
 export async function getProfileEvents(

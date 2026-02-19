@@ -4,7 +4,7 @@ import type { SchemaDataType } from './schema';
 export type UserSchemaType = 'aggregate' | 'formula';
 
 // Aggregate operation types
-export type AggregateOperation = 
+export type AggregateOperation =
   | 'count'        // Count total occurrences
   | 'sum'          // Sum numeric values
   | 'count_unique' // Count unique occurrences
@@ -51,18 +51,18 @@ export interface UserSchema {
   displayName: string;
   description?: string;
   schemaType: UserSchemaType;
-  
+
   // For aggregate type
   aggregateConfig?: AggregateSchemaConfig;
-  
+
   // For formula type
   formula?: string;
-  
+
   dataType: SchemaDataType;
   format?: string;
   icon?: string;
   category?: string;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -95,38 +95,38 @@ export interface UpdateUserSchemaDTO {
 // Validation helpers
 export function validateAggregateConfig(config: AggregateSchemaConfig): string[] {
   const errors: string[] = [];
-  
+
   if (!config.operation) {
     errors.push('Operation is required');
   }
-  
+
   if (!config.timeframe) {
     errors.push('Timeframe is required');
   }
-  
+
   // Operations that require eventProperty
   const requiresProperty = ['sum', 'mean', 'min', 'max', 'last_touch', 'first_touch', 'top'];
   if (requiresProperty.includes(config.operation) && !config.eventProperty) {
     errors.push(`Operation '${config.operation}' requires an event property`);
   }
-  
+
   return errors;
 }
 
 export function validateFormula(formula: string): string[] {
   const errors: string[] = [];
-  
+
   if (!formula || formula.trim().length === 0) {
     errors.push('Formula cannot be empty');
   }
-  
+
   // Basic syntax validation (can be expanded)
   const validFunctions = ['CAT', 'IF', 'MATH', 'DATE', 'SUM', 'COUNT', 'AVG'];
   const hasValidFunction = validFunctions.some(fn => formula.includes(fn));
-  
+
   if (!hasValidFunction) {
     errors.push('Formula must contain at least one valid function');
   }
-  
+
   return errors;
 }

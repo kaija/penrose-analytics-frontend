@@ -1,9 +1,9 @@
 /**
  * Unit tests for Project API Routes
- * 
- * Tests POST /api/projects, GET /api/projects, PUT /api/projects/[id], 
+ *
+ * Tests POST /api/projects, GET /api/projects, PUT /api/projects/[id],
  * and POST /api/projects/[id]/switch
- * 
+ *
  * Requirements: 3.1, 3.2, 3.3, 3.4
  */
 

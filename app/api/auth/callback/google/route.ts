@@ -1,7 +1,7 @@
 /**
  * OAuth Callback Route
  * Handles Google OAuth callback, exchanges code for token, and creates user session
- * 
+ *
  * Requirements: 2.2, 2.3, 2.4, 2.5
  */
 
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('OAuth callback error:', error);
-    
+
     // Try to log failed login if we have user info
     try {
       const searchParams = request.nextUrl.searchParams;
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
     } catch {
       // Ignore audit log errors
     }
-    
+
     return NextResponse.redirect(
       new URL('/login?error=authentication_failed', request.url)
     );

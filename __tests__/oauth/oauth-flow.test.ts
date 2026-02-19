@@ -1,7 +1,7 @@
 /**
  * Unit tests for OAuth flow
  * Tests specific scenarios for Google OAuth authentication
- * 
+ *
  * Requirements: 2.1, 2.4, 2.5, 2.10
  */
 
@@ -461,7 +461,7 @@ describe('OAuth Flow Unit Tests', () => {
       // Verify: Authentication rejected
       expect(prisma.user.create).not.toHaveBeenCalled();
       expect(createSession).not.toHaveBeenCalled();
-      
+
       const location = response.headers.get('location');
       expect(location).toContain('/login');
       expect(location).toContain('error=email_required');
@@ -498,7 +498,7 @@ describe('OAuth Flow Unit Tests', () => {
       // Verify: Authentication rejected
       expect(prisma.user.create).not.toHaveBeenCalled();
       expect(createSession).not.toHaveBeenCalled();
-      
+
       const location = response.headers.get('location');
       expect(location).toContain('/login');
       expect(location).toContain('error=email_required');

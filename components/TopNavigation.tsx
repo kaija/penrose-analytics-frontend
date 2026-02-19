@@ -5,14 +5,14 @@ import Link from 'next/link';
 import ThemeToggle from './ThemeToggle';
 import ProjectSwitcher from './ProjectSwitcher';
 import { useUser } from '@/contexts/UserContext';
-import { 
-  Bell, 
-  LayoutDashboard, 
-  Activity, 
-  Users, 
-  BarChart, 
-  Zap, 
-  Settings 
+import {
+  Bell,
+  LayoutDashboard,
+  Activity,
+  Users,
+  BarChart,
+  Zap,
+  Settings
 } from './icons';
 
 const navigationTabs = [
@@ -67,13 +67,13 @@ export default function TopNavigation() {
               Super Admin
             </Link>
           )}
-          
+
           <button className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-md transition-colors">
             <Bell className="w-5 h-5" />
           </button>
 
           <ThemeToggle />
-          
+
           <ProjectSwitcher />
         </div>
       </div>

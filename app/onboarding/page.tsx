@@ -1,7 +1,7 @@
 /**
  * Onboarding Page
  * Guides first-time users to create their first project
- * 
+ *
  * Requirements: 2.5
  */
 

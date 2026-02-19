@@ -1,6 +1,6 @@
 /**
  * Audit Log Utility
- * 
+ *
  * Provides functions to log user actions for security and compliance.
  * Logs are stored in the AuditLog table and can be viewed in the project history.
  */
@@ -12,19 +12,19 @@ export type AuditAction =
   | 'auth.login.success'
   | 'auth.login.failure'
   | 'auth.logout'
-  
+
   // Project operations
   | 'project.create'
   | 'project.update'
   | 'project.delete'
   | 'project.switch'
-  
+
   // Member operations
   | 'member.invite'
   | 'member.update'
   | 'member.remove'
   | 'member.accept_invitation'
-  
+
   // Schema operations
   | 'schema.event.create'
   | 'schema.event.update'
@@ -32,27 +32,27 @@ export type AuditAction =
   | 'schema.user.create'
   | 'schema.user.update'
   | 'schema.user.delete'
-  
+
   // Segment operations
   | 'segment.create'
   | 'segment.update'
   | 'segment.delete'
-  
+
   // Dashboard operations
   | 'dashboard.create'
   | 'dashboard.update'
   | 'dashboard.delete'
-  
+
   // Report operations
   | 'report.create'
   | 'report.update'
   | 'report.delete'
-  
+
   // Profile operations
   | 'profile.create'
   | 'profile.update'
   | 'profile.delete'
-  
+
   // Event operations
   | 'event.create'
   | 'event.update'
@@ -108,15 +108,15 @@ export async function getProjectAuditLogs(
   }
 ) {
   const where: any = { projectId };
-  
+
   if (options?.userId) {
     where.userId = options.userId;
   }
-  
+
   if (options?.action) {
     where.action = options.action;
   }
-  
+
   if (options?.startDate || options?.endDate) {
     where.timestamp = {};
     if (options.startDate) {
@@ -126,7 +126,7 @@ export async function getProjectAuditLogs(
       where.timestamp.lte = options.endDate;
     }
   }
-  
+
   const [logs, total] = await Promise.all([
     prisma.auditLog.findMany({
       where,
@@ -146,7 +146,7 @@ export async function getProjectAuditLogs(
     }),
     prisma.auditLog.count({ where }),
   ]);
-  
+
   return { logs, total };
 }
 
@@ -164,11 +164,11 @@ export async function getUserAuditLogs(
   }
 ) {
   const where: any = { userId };
-  
+
   if (options?.action) {
     where.action = options.action;
   }
-  
+
   if (options?.startDate || options?.endDate) {
     where.timestamp = {};
     if (options.startDate) {
@@ -178,7 +178,7 @@ export async function getUserAuditLogs(
       where.timestamp.lte = options.endDate;
     }
   }
-  
+
   const [logs, total] = await Promise.all([
     prisma.auditLog.findMany({
       where,
@@ -204,7 +204,7 @@ export async function getUserAuditLogs(
     }),
     prisma.auditLog.count({ where }),
   ]);
-  
+
   return { logs, total };
 }
 

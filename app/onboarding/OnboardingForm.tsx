@@ -3,7 +3,7 @@
 /**
  * Onboarding Form Component
  * Client-side form for creating the first project
- * 
+ *
  * Requirements: 2.5
  */
 

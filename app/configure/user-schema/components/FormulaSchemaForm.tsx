@@ -27,7 +27,7 @@ export default function FormulaSchemaForm({ projectId, editing, onSuccess, onCan
   const [formula, setFormula] = useState('');
   const [dataType, setDataType] = useState<SchemaDataType>('string');
   const [format, setFormat] = useState('');
-  
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +44,7 @@ export default function FormulaSchemaForm({ projectId, editing, onSuccess, onCan
 
   const handleSave = async () => {
     setError(null);
-    
+
     if (!field.trim()) { setError('欄位名稱為必填'); return; }
     if (!displayName.trim()) { setError('顯示名稱為必填'); return; }
     if (!formula.trim()) { setError('公式為必填'); return; }
@@ -69,7 +69,7 @@ export default function FormulaSchemaForm({ projectId, editing, onSuccess, onCan
         ? `/api/projects/${projectId}/schema/users/${editing.id}`
         : `/api/projects/${projectId}/schema/users`;
       const method = editing ? 'PATCH' : 'POST';
-      
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -134,7 +134,7 @@ export default function FormulaSchemaForm({ projectId, editing, onSuccess, onCan
             rows={4}
             placeholder='e.g. CAT(first_name, " ", last_name)'
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm font-mono" />
-          
+
           <div className="mt-2 p-3 bg-cyan-50 dark:bg-cyan-950 border border-cyan-200 dark:border-cyan-800 rounded text-sm">
             <div className="flex items-start gap-2">
               <Info className="w-4 h-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />

@@ -1,9 +1,9 @@
 /**
  * Project Events API Routes
- * 
+ *
  * POST /api/projects/[id]/events - Track an event
  * GET /api/projects/[id]/events - List events with filters
- * 
+ *
  * Requirements: 11.1, 11.2, 11.3, 11.5
  */
 
@@ -25,7 +25,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/projects/[id]/events
  * Track a new event
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 11.1
  */
 export const POST = withErrorHandler(async (
@@ -99,7 +99,7 @@ export const POST = withErrorHandler(async (
  * GET /api/projects/[id]/events
  * List events with filters
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 11.2, 11.3, 11.5
  */
 export const GET = withErrorHandler(async (

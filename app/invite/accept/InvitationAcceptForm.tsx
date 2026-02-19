@@ -3,7 +3,7 @@
 /**
  * Invitation Accept Form Component
  * Client component that handles the invitation acceptance submission
- * 
+ *
  * Requirements: 5.7, 5.8
  */
 

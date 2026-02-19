@@ -71,8 +71,8 @@ describe('ID Hierarchy API', () => {
       (prisma.idHierarchy.findMany as jest.Mock).mockResolvedValue(mockIdHierarchy);
 
       const request = new NextRequest('http://localhost/api/projects/project-1/id-hierarchy');
-      const response = await GET(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await GET(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -88,8 +88,8 @@ describe('ID Hierarchy API', () => {
       (validateSession as jest.Mock).mockResolvedValue(null);
 
       const request = new NextRequest('http://localhost/api/projects/project-1/id-hierarchy');
-      const response = await GET(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await GET(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
 
       expect(response.status).toBe(401);
@@ -99,8 +99,8 @@ describe('ID Hierarchy API', () => {
       (prisma.project.findUnique as jest.Mock).mockResolvedValue(null);
 
       const request = new NextRequest('http://localhost/api/projects/project-1/id-hierarchy');
-      const response = await GET(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await GET(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
 
       expect(response.status).toBe(404);
@@ -131,8 +131,8 @@ describe('ID Hierarchy API', () => {
         }),
       });
 
-      const response = await POST(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await POST(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -151,8 +151,8 @@ describe('ID Hierarchy API', () => {
         }),
       });
 
-      const response = await POST(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await POST(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -172,8 +172,8 @@ describe('ID Hierarchy API', () => {
         }),
       });
 
-      const response = await POST(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await POST(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -197,8 +197,8 @@ describe('ID Hierarchy API', () => {
         }),
       });
 
-      const response = await PUT(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -217,8 +217,8 @@ describe('ID Hierarchy API', () => {
         { method: 'DELETE' }
       );
 
-      const response = await DELETE(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 
@@ -235,8 +235,8 @@ describe('ID Hierarchy API', () => {
         { method: 'DELETE' }
       );
 
-      const response = await DELETE(request, { 
-        params: Promise.resolve({ id: 'project-1' }) 
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: 'project-1' })
       });
       const data = await response.json();
 

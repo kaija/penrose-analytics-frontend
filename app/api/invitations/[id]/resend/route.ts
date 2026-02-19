@@ -1,8 +1,8 @@
 /**
  * Invitation Resend API Route
- * 
+ *
  * POST /api/invitations/[id]/resend - Resend invitation
- * 
+ *
  * Requirements: 5.10
  */
 
@@ -11,8 +11,8 @@ import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession } from '@/lib/session';
 import { getUserRole } from '@/lib/project';
 import { resendInvitation } from '@/lib/invitation';
-import { 
-  AuthenticationError, 
+import {
+  AuthenticationError,
   AuthorizationError,
   NotFoundError
 } from '@/lib/errors';
@@ -22,7 +22,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/invitations/[id]/resend
  * Resend an invitation by extending its expiration and sending a new email
  * Only owners and admins can resend invitations
- * 
+ *
  * Requirements: 5.10
  */
 export const POST = withErrorHandler(async (

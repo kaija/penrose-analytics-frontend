@@ -292,7 +292,7 @@ describe('ID Mapping', () => {
       const stats = await getIdMappingStats(testProjectId);
       expect(stats.total).toBe(3);
       expect(stats.byType).toHaveLength(2);
-      
+
       const emailStat = stats.byType.find(s => s.idType === 'email');
       expect(emailStat?.count).toBe(2);
     });
@@ -307,7 +307,7 @@ describe('ID Mapping', () => {
       );
 
       expect(mapping.expiresAt).toBeDefined();
-      
+
       const daysUntilExpiry = Math.floor(
         (mapping.expiresAt!.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
       );
@@ -323,7 +323,7 @@ describe('ID Mapping', () => {
       );
 
       expect(mapping.expiresAt).toBeDefined();
-      
+
       const daysUntilExpiry = Math.floor(
         (mapping.expiresAt!.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
       );

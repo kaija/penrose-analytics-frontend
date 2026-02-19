@@ -1,9 +1,9 @@
 /**
  * Error Handler Middleware for Next.js API Routes
- * 
+ *
  * Provides middleware for handling errors in API routes and server actions,
  * with automatic error logging, status code mapping, and response formatting.
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 
@@ -20,14 +20,14 @@ export type ApiHandler = (
 
 /**
  * Wrap an API route handler with error handling
- * 
+ *
  * Catches all errors thrown by the handler, logs them appropriately,
  * and returns a formatted error response with the correct HTTP status code.
- * 
+ *
  * @param handler - The API route handler function
  * @param options - Configuration options
  * @returns Wrapped handler with error handling
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 export function withErrorHandler(
@@ -40,18 +40,18 @@ export function withErrorHandler(
     } catch (error) {
       // Ensure error is an Error instance
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       // Log the error with request context
       logError(err, {
         method: request.method,
         url: request.url,
         headers: Object.fromEntries(request.headers.entries()),
       });
-      
+
       // Format error response
       const isAdmin = options.isAdminRoute || false;
       const errorResponse = formatErrorResponse(err, isAdmin);
-      
+
       // Return error response with appropriate status code
       return NextResponse.json(errorResponse, {
         status: errorResponse.error.statusCode,
@@ -74,14 +74,14 @@ export type ActionResult<T> =
 
 /**
  * Wrap a server action with error handling
- * 
+ *
  * Catches all errors thrown by the action, logs them appropriately,
  * and returns a result object with success/error status.
- * 
+ *
  * @param action - The server action function
  * @param options - Configuration options
  * @returns Wrapped action with error handling
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 export function withServerActionErrorHandler<T>(
@@ -95,17 +95,17 @@ export function withServerActionErrorHandler<T>(
     } catch (error) {
       // Ensure error is an Error instance
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       // Log the error
       logError(err, {
         action: action.name,
         args: args.map((arg) => (typeof arg === 'object' ? '[Object]' : arg)),
       });
-      
+
       // Format error response
       const isAdmin = options.isAdminAction || false;
       const errorResponse = formatErrorResponse(err, isAdmin);
-      
+
       return {
         success: false,
         error: {
@@ -120,7 +120,7 @@ export function withServerActionErrorHandler<T>(
 
 /**
  * Create a standardized success response
- * 
+ *
  * @param data - The response data
  * @param status - HTTP status code (default: 200)
  * @returns NextResponse with formatted success data
@@ -131,11 +131,11 @@ export function successResponse<T>(data: T, status: number = 200): NextResponse 
 
 /**
  * Create a standardized error response
- * 
+ *
  * @param error - The error to format
  * @param isAdmin - Whether the user is an admin
  * @returns NextResponse with formatted error data
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 export function errorResponse(error: Error, isAdmin: boolean = false): NextResponse {
@@ -147,10 +147,10 @@ export function errorResponse(error: Error, isAdmin: boolean = false): NextRespo
 
 /**
  * Async error boundary for React Server Components
- * 
+ *
  * Wraps a server component function with error handling that logs errors
  * and re-throws them for Next.js error boundaries to catch.
- * 
+ *
  * @param component - The server component function
  * @returns Wrapped component with error logging
  */
@@ -163,13 +163,13 @@ export function withComponentErrorHandler<P extends Record<string, unknown>>(
     } catch (error) {
       // Ensure error is an Error instance
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       // Log the error
       logError(err, {
         component: component.name,
         props: Object.keys(props),
       });
-      
+
       // Re-throw for Next.js error boundary
       throw err;
     }
@@ -178,7 +178,7 @@ export function withComponentErrorHandler<P extends Record<string, unknown>>(
 
 /**
  * Check if an error is an operational error (safe to expose to users)
- * 
+ *
  * @param error - The error to check
  * @returns true if the error is operational
  */
@@ -188,7 +188,7 @@ export function isOperationalError(error: Error): boolean {
 
 /**
  * Get HTTP status code from an error
- * 
+ *
  * @param error - The error to get status code from
  * @returns HTTP status code
  */
@@ -196,7 +196,7 @@ export function getErrorStatusCode(error: Error): number {
   if (error instanceof AppError) {
     return error.statusCode;
   }
-  
+
   // Default to 500 for unknown errors
   return 500;
 }

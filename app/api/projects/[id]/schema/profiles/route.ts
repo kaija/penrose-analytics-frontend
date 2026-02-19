@@ -54,7 +54,7 @@ export const GET = withErrorHandler(async (
  * POST /api/projects/[id]/schema/profiles
  * Profile properties are now predefined and cannot be created via API
  * Use UserSchema API for computed fields instead
- * 
+ *
  * Requirements: 4.5
  */
 export const POST = withErrorHandler(async (

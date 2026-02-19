@@ -5,13 +5,13 @@ import { PrismaClient } from '@prisma/client';
 export async function GET() {
   try {
     const session = await validateSession();
-    
+
     if (!session?.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const prisma = new PrismaClient();
-    
+
     try {
       // Verify super admin access
       const user = await prisma.user.findUnique({

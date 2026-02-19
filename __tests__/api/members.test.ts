@@ -1,17 +1,17 @@
 /**
  * Unit tests for Project Member Management API Routes
- * 
+ *
  * Tests GET /api/projects/[id]/members, PUT /api/projects/[id]/members/[memberId],
  * and DELETE /api/projects/[id]/members/[memberId]
- * 
+ *
  * Requirements: 17.1, 17.3, 17.4
  */
 
 import { NextRequest } from 'next/server';
 import { GET as listMembers } from '@/app/api/projects/[id]/members/route';
-import { 
-  PUT as updateMember, 
-  DELETE as removeMember 
+import {
+  PUT as updateMember,
+  DELETE as removeMember
 } from '@/app/api/projects/[id]/members/[memberId]/route';
 import { validateSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';

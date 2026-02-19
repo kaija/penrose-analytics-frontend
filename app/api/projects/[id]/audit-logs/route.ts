@@ -1,6 +1,6 @@
 /**
  * Audit Logs API Route
- * 
+ *
  * GET /api/projects/[id]/audit-logs - Get audit logs for a project
  */
 
@@ -40,11 +40,11 @@ export const GET = withErrorHandler(async (
   const offset = parseInt(searchParams.get('offset') || '0');
   const action = searchParams.get('action') || undefined;
   const userId = searchParams.get('userId') || undefined;
-  const startDate = searchParams.get('startDate') 
-    ? new Date(searchParams.get('startDate')!) 
+  const startDate = searchParams.get('startDate')
+    ? new Date(searchParams.get('startDate')!)
     : undefined;
-  const endDate = searchParams.get('endDate') 
-    ? new Date(searchParams.get('endDate')!) 
+  const endDate = searchParams.get('endDate')
+    ? new Date(searchParams.get('endDate')!)
     : undefined;
 
   // Get audit logs

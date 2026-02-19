@@ -1,6 +1,6 @@
 /**
  * Unit tests for RBAC permission system
- * 
+ *
  * Feature: prism
  */
 

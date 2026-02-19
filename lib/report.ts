@@ -1,9 +1,9 @@
 /**
  * Report Management Module
- * 
+ *
  * Provides functions for managing report CRUD operations.
  * Reports are saved analytics queries with specific parameters.
- * 
+ *
  * Requirements: 8.7, 8.8
  */
 
@@ -12,12 +12,12 @@ import { NotFoundError } from './errors';
 
 /**
  * Create a new report
- * 
+ *
  * @param projectId - The ID of the project
  * @param name - The name of the report
  * @param category - The category of the report
  * @returns The created report
- * 
+ *
  * Requirements: 8.7
  */
 export async function createReport(
@@ -39,10 +39,10 @@ export async function createReport(
 
 /**
  * Get all reports for a project
- * 
+ *
  * @param projectId - The ID of the project
  * @returns Array of reports
- * 
+ *
  * Requirements: 8.8
  */
 export async function getProjectReports(projectId: string) {
@@ -60,10 +60,10 @@ export async function getProjectReports(projectId: string) {
 
 /**
  * Get a report by ID
- * 
+ *
  * @param reportId - The ID of the report
  * @returns The report or null if not found
- * 
+ *
  * Requirements: 8.8
  */
 export async function getReport(reportId: string) {
@@ -78,12 +78,12 @@ export async function getReport(reportId: string) {
 
 /**
  * Update a report
- * 
+ *
  * @param reportId - The ID of the report
  * @param updates - The fields to update
  * @returns The updated report
  * @throws NotFoundError if report doesn't exist
- * 
+ *
  * Requirements: 8.8
  */
 export async function updateReport(
@@ -108,10 +108,10 @@ export async function updateReport(
 
 /**
  * Delete a report
- * 
+ *
  * @param reportId - The ID of the report
  * @throws NotFoundError if report doesn't exist
- * 
+ *
  * Requirements: 8.8
  */
 export async function deleteReport(reportId: string) {

@@ -1,7 +1,7 @@
 /**
  * Login Page
  * Displays Google OAuth login button and initiates authentication flow
- * 
+ *
  * Requirements: 2.1
  */
 

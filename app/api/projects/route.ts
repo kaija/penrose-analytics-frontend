@@ -1,9 +1,9 @@
 /**
  * Projects API Routes
- * 
+ *
  * POST /api/projects - Create a new project
  * GET /api/projects - List user's projects
- * 
+ *
  * Requirements: 3.1, 3.2, 3.3
  */
 
@@ -17,7 +17,7 @@ import { prisma } from '@/lib/prisma';
 /**
  * POST /api/projects
  * Create a new project
- * 
+ *
  * Requirements: 3.1, 3.2
  * Only super admins can create projects
  */
@@ -65,7 +65,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
 /**
  * GET /api/projects
  * List all projects for the authenticated user
- * 
+ *
  * Requirements: 3.3
  */
 export const GET = withErrorHandler(async (request: NextRequest) => {

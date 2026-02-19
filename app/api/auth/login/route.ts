@@ -1,7 +1,7 @@
 /**
  * OAuth Login Route
  * Initiates Google OAuth flow by redirecting to Google authorization endpoint
- * 
+ *
  * Requirements: 2.1, 2.2
  */
 

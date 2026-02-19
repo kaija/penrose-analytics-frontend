@@ -152,7 +152,7 @@ describe('Invitation Creation', () => {
 
     // Test each role type
     const roles: Role[] = ['owner', 'admin', 'editor', 'viewer'];
-    
+
     for (const role of roles) {
       const invitation = await createInvitation(
         project.id,
@@ -160,7 +160,7 @@ describe('Invitation Creation', () => {
         role,
         user.id
       );
-      
+
       expect(invitation.role).toBe(role);
     }
 
@@ -176,17 +176,17 @@ describe('Invitation Creation', () => {
 describe('Invitation Email Sending', () => {
   // Mock the sendEmail function
   let mockSendEmail: jest.Mock;
-  
+
   beforeEach(() => {
     // Reset modules to clear any cached imports
     jest.resetModules();
-    
+
     // Create mock function
     mockSendEmail = jest.fn().mockResolvedValue({
       success: true,
       messageId: 'test-message-id',
     });
-    
+
     // Mock the email module
     jest.mock('@/lib/email', () => ({
       sendEmail: mockSendEmail,
@@ -209,7 +209,7 @@ describe('Invitation Email Sending', () => {
     // Import after mocking
     const { sendInvitationEmail } = await import('@/lib/invitation');
     const { sendEmail } = await import('@/lib/email');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -250,33 +250,33 @@ describe('Invitation Email Sending', () => {
 
     // Verify sendEmail was called
     expect(sendEmail).toHaveBeenCalledTimes(1);
-    
+
     const emailOptions = (sendEmail as jest.Mock).mock.calls[0][0];
-    
+
     // Verify email recipient
     expect(emailOptions.to).toBe('invited@example.com');
-    
+
     // Verify subject includes project name
     expect(emailOptions.subject).toContain('Test Project');
-    
+
     // Verify text body includes acceptance link with token
     expect(emailOptions.text).toContain('https://prism.example.com/invite/accept?token=test-token-123');
-    
+
     // Verify text body includes project name
     expect(emailOptions.text).toContain('Test Project');
-    
+
     // Verify text body includes inviter name
     expect(emailOptions.text).toContain('Owner User');
-    
+
     // Verify HTML body includes acceptance link
     expect(emailOptions.html).toContain('https://prism.example.com/invite/accept?token=test-token-123');
-    
+
     // Verify HTML body includes project name
     expect(emailOptions.html).toContain('Test Project');
-    
+
     // Verify HTML body includes inviter name
     expect(emailOptions.html).toContain('Owner User');
-    
+
     // Verify result
     expect(result.success).toBe(true);
   });
@@ -285,7 +285,7 @@ describe('Invitation Email Sending', () => {
     // Import after mocking
     const { sendInvitationEmail } = await import('@/lib/invitation');
     const { sendEmail } = await import('@/lib/email');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -333,7 +333,7 @@ describe('Invitation Email Sending', () => {
     // Import after mocking
     const { sendInvitationEmail } = await import('@/lib/invitation');
     const { sendEmail } = await import('@/lib/email');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -368,13 +368,13 @@ describe('Invitation Email Sending', () => {
 
     // Verify all required information is included
     const emailOptions = (sendEmail as jest.Mock).mock.calls[0][0];
-    
+
     // Check recipient
     expect(emailOptions.to).toBe('newuser@example.com');
-    
+
     // Check subject
     expect(emailOptions.subject).toBe("You've been invited to join Analytics Project on Prism");
-    
+
     // Check text body includes all required elements
     expect(emailOptions.text).toContain('Admin User'); // inviter name
     expect(emailOptions.text).toContain('admin@example.com'); // inviter email
@@ -382,7 +382,7 @@ describe('Invitation Email Sending', () => {
     expect(emailOptions.text).toContain('admin'); // role
     expect(emailOptions.text).toContain('/invite/accept?token=test-token-789'); // acceptance link
     expect(emailOptions.text).toContain(expiresAt.toLocaleDateString()); // expiration date
-    
+
     // Check HTML body includes all required elements
     expect(emailOptions.html).toContain('Admin User');
     expect(emailOptions.html).toContain('admin@example.com');
@@ -395,7 +395,7 @@ describe('Invitation Email Sending', () => {
   test('sendInvitationEmail returns send result', async () => {
     // Import after mocking
     const { sendInvitationEmail } = await import('@/lib/invitation');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -467,7 +467,7 @@ describe('Invitation Validation', () => {
 
   test('validateInvitationToken returns invitation for valid token', async () => {
     const { validateInvitationToken } = await import('@/lib/invitation');
-    
+
     // Create test data
     const project = await prisma.project.create({
       data: { name: 'Test Project' },
@@ -494,7 +494,7 @@ describe('Invitation Validation', () => {
 
   test('validateInvitationToken returns null for invalid token', async () => {
     const { validateInvitationToken } = await import('@/lib/invitation');
-    
+
     // Try to validate non-existent token
     const result = await validateInvitationToken('non-existent-token');
 
@@ -503,7 +503,7 @@ describe('Invitation Validation', () => {
 
   test('validateInvitationToken returns null for expired invitation', async () => {
     const { validateInvitationToken } = await import('@/lib/invitation');
-    
+
     // Create test data
     const project = await prisma.project.create({
       data: { name: 'Test Project' },
@@ -528,7 +528,7 @@ describe('Invitation Validation', () => {
 
   test('validateInvitationToken returns null for already accepted invitation', async () => {
     const { validateInvitationToken } = await import('@/lib/invitation');
-    
+
     // Create test data
     const project = await prisma.project.create({
       data: { name: 'Test Project' },
@@ -567,7 +567,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation creates ProjectMembership for valid invitation', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -615,7 +615,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation rejects mismatched email', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     await prisma.user.create({
       data: {
@@ -652,7 +652,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation rejects expired invitation', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     await prisma.user.create({
       data: {
@@ -689,7 +689,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation rejects invalid token', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test user
     await prisma.user.create({
       data: {
@@ -706,7 +706,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation rejects already accepted invitation', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const user = await prisma.user.create({
       data: {
@@ -738,7 +738,7 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation requires authenticated user', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data without creating user
     const project = await prisma.project.create({
       data: { name: 'Test Project' },
@@ -762,10 +762,10 @@ describe('Invitation Acceptance', () => {
 
   test('acceptInvitation assigns correct role', async () => {
     const { acceptInvitation } = await import('@/lib/invitation');
-    
+
     // Test each role type
     const roles: Role[] = ['owner', 'admin', 'editor', 'viewer'];
-    
+
     for (const role of roles) {
       // Create test data
       const user = await prisma.user.create({
@@ -802,17 +802,17 @@ describe('Invitation Acceptance', () => {
 describe('Invitation Resend', () => {
   // Mock the sendEmail function
   let mockSendEmail: jest.Mock;
-  
+
   beforeEach(() => {
     // Reset modules to clear any cached imports
     jest.resetModules();
-    
+
     // Create mock function
     mockSendEmail = jest.fn().mockResolvedValue({
       success: true,
       messageId: 'test-message-id',
     });
-    
+
     // Mock the email module
     jest.mock('@/lib/email', () => ({
       sendEmail: mockSendEmail,
@@ -833,7 +833,7 @@ describe('Invitation Resend', () => {
 
   test('resendInvitation extends expiresAt timestamp by 7 days', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const owner = await prisma.user.create({
       data: {
@@ -890,7 +890,7 @@ describe('Invitation Resend', () => {
   test('resendInvitation sends email with same token', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
     const { sendEmail } = await import('@/lib/email');
-    
+
     // Create test data
     const owner = await prisma.user.create({
       data: {
@@ -926,20 +926,20 @@ describe('Invitation Resend', () => {
 
     // Verify sendEmail was called
     expect(sendEmail).toHaveBeenCalledTimes(1);
-    
+
     const emailOptions = (sendEmail as jest.Mock).mock.calls[0][0];
-    
+
     // Verify email contains the same token
     expect(emailOptions.text).toContain('same-token-456');
     expect(emailOptions.html).toContain('same-token-456');
-    
+
     // Verify result
     expect(result.success).toBe(true);
   });
 
   test('resendInvitation returns send result', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const owner = await prisma.user.create({
       data: {
@@ -995,7 +995,7 @@ describe('Invitation Resend', () => {
 
   test('resendInvitation rejects non-existent invitation', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Try to resend non-existent invitation
     await expect(
       resendInvitation('non-existent-id')
@@ -1004,7 +1004,7 @@ describe('Invitation Resend', () => {
 
   test('resendInvitation rejects already accepted invitation', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const owner = await prisma.user.create({
       data: {
@@ -1045,7 +1045,7 @@ describe('Invitation Resend', () => {
 
   test('resendInvitation works with expired invitation', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data
     const owner = await prisma.user.create({
       data: {
@@ -1094,7 +1094,7 @@ describe('Invitation Resend', () => {
   test('resendInvitation uses project owner or admin as sender', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
     const { sendEmail } = await import('@/lib/email');
-    
+
     // Create test data with admin (not owner)
     const admin = await prisma.user.create({
       data: {
@@ -1136,7 +1136,7 @@ describe('Invitation Resend', () => {
 
   test('resendInvitation fails if no owner or admin exists', async () => {
     const { resendInvitation } = await import('@/lib/invitation');
-    
+
     // Create test data with only editor (no owner/admin)
     const editor = await prisma.user.create({
       data: {

@@ -1,9 +1,9 @@
 /**
  * Project Dashboards API Routes
- * 
+ *
  * POST /api/projects/[id]/dashboards - Create a new dashboard
  * GET /api/projects/[id]/dashboards - List dashboards for a project
- * 
+ *
  * Requirements: 7.1, 7.9
  */
 
@@ -24,7 +24,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/projects/[id]/dashboards
  * Create a new dashboard
  * Requires editor+ permissions
- * 
+ *
  * Requirements: 7.9
  */
 export const POST = withErrorHandler(async (
@@ -77,7 +77,7 @@ export const POST = withErrorHandler(async (
  * GET /api/projects/[id]/dashboards
  * List all dashboards for a project
  * Requires viewer+ permissions
- * 
+ *
  * Requirements: 7.1
  */
 export const GET = withErrorHandler(async (

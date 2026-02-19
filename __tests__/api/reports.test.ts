@@ -1,8 +1,8 @@
 /**
  * Report API Routes Tests
- * 
+ *
  * Tests for report CRUD operations via API routes
- * 
+ *
  * Requirements: 8.7, 8.8
  */
 

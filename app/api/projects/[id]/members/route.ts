@@ -1,8 +1,8 @@
 /**
  * Project Members API Routes
- * 
+ *
  * GET /api/projects/[id]/members - List project members
- * 
+ *
  * Requirements: 17.1
  */
 
@@ -10,8 +10,8 @@ import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession } from '@/lib/session';
 import { getUserRole, getProjectMembers } from '@/lib/project';
-import { 
-  AuthenticationError, 
+import {
+  AuthenticationError,
   AuthorizationError,
   NotFoundError
 } from '@/lib/errors';
@@ -21,7 +21,7 @@ import { prisma } from '@/lib/prisma';
  * GET /api/projects/[id]/members
  * List all members of a project
  * Only owners and admins can view members
- * 
+ *
  * Requirements: 17.1
  */
 export const GET = withErrorHandler(async (

@@ -1,8 +1,8 @@
 /**
  * Invitation Acceptance API Route
- * 
+ *
  * POST /api/invitations/accept - Process invitation acceptance
- * 
+ *
  * Requirements: 5.5, 5.6, 5.7, 5.8
  */
 
@@ -10,7 +10,7 @@ import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession } from '@/lib/session';
 import { acceptInvitation } from '@/lib/invitation';
-import { 
+import {
   AuthenticationError,
   ValidationError,
   validateRequiredFields
@@ -21,7 +21,7 @@ import { prisma } from '@/lib/prisma';
  * POST /api/invitations/accept
  * Process invitation acceptance
  * Requires authentication and validates email matches invitation
- * 
+ *
  * Requirements: 5.5, 5.6, 5.7, 5.8
  */
 export const POST = withErrorHandler(async (

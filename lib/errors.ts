@@ -1,9 +1,9 @@
 /**
  * Error Handling Module
- * 
+ *
  * Provides custom error classes, error classification, HTTP status code mapping,
  * validation error formatting, and security-conscious error message sanitization.
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 
@@ -34,7 +34,7 @@ export class AppError extends Error {
 /**
  * Validation error for invalid input data
  * HTTP 400 Bad Request
- * 
+ *
  * Requirements: 19.1
  */
 export class ValidationError extends AppError {
@@ -49,7 +49,7 @@ export class ValidationError extends AppError {
 /**
  * Authentication error for missing or invalid authentication
  * HTTP 401 Unauthorized
- * 
+ *
  * Requirements: 2.10, 15.4
  */
 export class AuthenticationError extends AppError {
@@ -61,7 +61,7 @@ export class AuthenticationError extends AppError {
 /**
  * Authorization error for insufficient permissions
  * HTTP 403 Forbidden
- * 
+ *
  * Requirements: 4.10, 19.3
  */
 export class AuthorizationError extends AppError {
@@ -73,7 +73,7 @@ export class AuthorizationError extends AppError {
 /**
  * Not found error for missing resources
  * HTTP 404 Not Found
- * 
+ *
  * Requirements: 19.4
  */
 export class NotFoundError extends AppError {
@@ -95,7 +95,7 @@ export class ConflictError extends AppError {
 /**
  * Database error for database operation failures
  * HTTP 503 Service Unavailable
- * 
+ *
  * Requirements: 19.2
  */
 export class DatabaseError extends AppError {
@@ -124,10 +124,10 @@ export interface FieldError {
 
 /**
  * Create a validation error with field-specific messages
- * 
+ *
  * @param fields - Array of field errors
  * @returns ValidationError with formatted field messages
- * 
+ *
  * Requirements: 19.1
  */
 export function createValidationError(fields: FieldError[]): ValidationError {
@@ -160,11 +160,11 @@ export interface ErrorResponse {
 /**
  * Sanitize error message for non-admin users
  * Removes sensitive implementation details like stack traces, database errors, internal paths
- * 
+ *
  * @param error - The error to sanitize
  * @param isAdmin - Whether the user is an admin
  * @returns Sanitized error message
- * 
+ *
  * Requirements: 19.6
  */
 export function sanitizeErrorMessage(error: Error, isAdmin: boolean = false): string {
@@ -187,11 +187,11 @@ export function sanitizeErrorMessage(error: Error, isAdmin: boolean = false): st
 /**
  * Format error for API response
  * Maps errors to HTTP status codes and formats validation errors with field details
- * 
+ *
  * @param error - The error to format
  * @param isAdmin - Whether the user is an admin (for error detail exposure)
  * @returns Formatted error response
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 export function formatErrorResponse(error: Error, isAdmin: boolean = false): ErrorResponse {
@@ -237,25 +237,25 @@ export function formatErrorResponse(error: Error, isAdmin: boolean = false): Err
 
 /**
  * Handle Prisma-specific errors and map to appropriate error types
- * 
+ *
  * @param error - The Prisma error
  * @param isAdmin - Whether the user is an admin
  * @returns Formatted error response
- * 
+ *
  * Requirements: 19.2
  */
 function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
   const errorName = error.constructor.name;
-  
+
   // Prisma unique constraint violation
   if (errorName === 'PrismaClientKnownRequestError') {
     const prismaError = error as any;
-    
+
     if (prismaError.code === 'P2002') {
       // Unique constraint violation
       const fields = prismaError.meta?.target || [];
       const fieldName = Array.isArray(fields) ? fields[0] : 'field';
-      
+
       return {
         error: {
           message: `A record with this ${fieldName} already exists`,
@@ -265,7 +265,7 @@ function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
         },
       };
     }
-    
+
     if (prismaError.code === 'P2003') {
       // Foreign key constraint violation
       return {
@@ -276,7 +276,7 @@ function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
         },
       };
     }
-    
+
     if (prismaError.code === 'P2025') {
       // Record not found
       return {
@@ -288,7 +288,7 @@ function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
       };
     }
   }
-  
+
   // Prisma connection errors
   if (errorName === 'PrismaClientInitializationError' || errorName === 'PrismaClientRustPanicError') {
     return {
@@ -300,7 +300,7 @@ function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
       },
     };
   }
-  
+
   // Generic Prisma error
   return {
     error: {
@@ -314,19 +314,19 @@ function handlePrismaError(error: Error, isAdmin: boolean): ErrorResponse {
 
 /**
  * Log error with appropriate level based on error type
- * 
+ *
  * @param error - The error to log
  * @param context - Additional context for logging
- * 
+ *
  * Requirements: 19.2, 19.5
  */
 export function logError(error: Error, context?: Record<string, unknown>): void {
   const isOperational = error instanceof AppError && error.isOperational;
-  
+
   // Log operational errors at warn level
   // Log non-operational errors at error level
   const logLevel = isOperational ? 'warn' : 'error';
-  
+
   const logData = {
     name: error.name,
     message: error.message,
@@ -335,7 +335,7 @@ export function logError(error: Error, context?: Record<string, unknown>): void 
     ...(error instanceof AppError && error.details && { details: error.details }),
     ...context,
   };
-  
+
   if (logLevel === 'error') {
     console.error('[ERROR]', JSON.stringify(logData, null, 2));
   } else {
@@ -345,11 +345,11 @@ export function logError(error: Error, context?: Record<string, unknown>): void 
 
 /**
  * Validate required fields in an object
- * 
+ *
  * @param data - The data object to validate
  * @param requiredFields - Array of required field names
  * @throws ValidationError if any required fields are missing
- * 
+ *
  * Requirements: 19.1
  */
 export function validateRequiredFields(
@@ -357,7 +357,7 @@ export function validateRequiredFields(
   requiredFields: string[]
 ): void {
   const errors: FieldError[] = [];
-  
+
   for (const field of requiredFields) {
     if (data[field] === undefined || data[field] === null || data[field] === '') {
       errors.push({
@@ -366,7 +366,7 @@ export function validateRequiredFields(
       });
     }
   }
-  
+
   if (errors.length > 0) {
     throw createValidationError(errors);
   }
@@ -374,11 +374,11 @@ export function validateRequiredFields(
 
 /**
  * Validate field types in an object
- * 
+ *
  * @param data - The data object to validate
  * @param fieldTypes - Map of field names to expected types
  * @throws ValidationError if any fields have incorrect types
- * 
+ *
  * Requirements: 19.1
  */
 export function validateFieldTypes(
@@ -386,16 +386,16 @@ export function validateFieldTypes(
   fieldTypes: Record<string, string>
 ): void {
   const errors: FieldError[] = [];
-  
+
   for (const [field, expectedType] of Object.entries(fieldTypes)) {
     const value = data[field];
-    
+
     if (value === undefined || value === null) {
       continue; // Skip undefined/null values (use validateRequiredFields for required checks)
     }
-    
+
     const actualType = typeof value;
-    
+
     if (actualType !== expectedType) {
       errors.push({
         field,
@@ -403,7 +403,7 @@ export function validateFieldTypes(
       });
     }
   }
-  
+
   if (errors.length > 0) {
     throw createValidationError(errors);
   }
@@ -411,11 +411,11 @@ export function validateFieldTypes(
 
 /**
  * Validate string length constraints
- * 
+ *
  * @param data - The data object to validate
  * @param constraints - Map of field names to min/max length constraints
  * @throws ValidationError if any fields violate length constraints
- * 
+ *
  * Requirements: 19.1
  */
 export function validateStringLength(
@@ -423,21 +423,21 @@ export function validateStringLength(
   constraints: Record<string, { min?: number; max?: number }>
 ): void {
   const errors: FieldError[] = [];
-  
+
   for (const [field, { min, max }] of Object.entries(constraints)) {
     const value = data[field];
-    
+
     if (typeof value !== 'string') {
       continue; // Skip non-string values
     }
-    
+
     if (min !== undefined && value.length < min) {
       errors.push({
         field,
         message: `Field '${field}' must be at least ${min} characters`,
       });
     }
-    
+
     if (max !== undefined && value.length > max) {
       errors.push({
         field,
@@ -445,7 +445,7 @@ export function validateStringLength(
       });
     }
   }
-  
+
   if (errors.length > 0) {
     throw createValidationError(errors);
   }
@@ -453,16 +453,16 @@ export function validateStringLength(
 
 /**
  * Validate email format
- * 
+ *
  * @param email - The email address to validate
  * @param fieldName - The field name for error messages
  * @throws ValidationError if email format is invalid
- * 
+ *
  * Requirements: 19.1
  */
 export function validateEmail(email: string, fieldName: string = 'email'): void {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
   if (!emailRegex.test(email)) {
     throw createValidationError([
       {

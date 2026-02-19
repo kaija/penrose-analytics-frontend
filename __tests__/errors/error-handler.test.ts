@@ -1,9 +1,9 @@
 /**
  * Unit tests for error handler middleware
- * 
+ *
  * Tests API route error handling, server action error handling,
  * and response formatting.
- * 
+ *
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6
  */
 
@@ -42,13 +42,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockResolvedValue(
       NextResponse.json({ data: 'success' })
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(handler).toHaveBeenCalledWith(request, undefined);
     expect(data).toEqual({ data: 'success' });
   });
@@ -57,13 +57,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new ValidationError('Invalid input', { email: 'Invalid email' })
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(response.status).toBe(400);
     expect(data.error.message).toBe('Invalid input');
     expect(data.error.code).toBe('ValidationError');
@@ -74,13 +74,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new AuthorizationError('Insufficient permissions')
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(response.status).toBe(403);
     expect(data.error.message).toBe('Insufficient permissions');
     expect(data.error.code).toBe('AuthorizationError');
@@ -90,13 +90,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new NotFoundError('Project')
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(response.status).toBe(404);
     expect(data.error.message).toBe('Project not found');
     expect(data.error.code).toBe('NotFoundError');
@@ -106,13 +106,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new Error('Unexpected error')
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(response.status).toBe(500);
     expect(data.error.code).toBe('InternalServerError');
     expect(data.error.message).toBe('An unexpected error occurred. Please try again later.');
@@ -122,14 +122,14 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new Error('Test error')
     );
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test', {
       method: 'POST',
     });
-    
+
     await wrappedHandler(request);
-    
+
     expect(consoleErrorSpy).toHaveBeenCalled();
     const logCall = consoleErrorSpy.mock.calls[0];
     const logData = JSON.parse(logCall[1]);
@@ -141,13 +141,13 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new AppError('Test error', 500, true, { debug: 'info' })
     );
-    
+
     const wrappedHandler = withErrorHandler(handler, { isAdminRoute: true });
     const request = new NextRequest('http://localhost/api/admin/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(data.error.details).toEqual({ debug: 'info' });
   });
 
@@ -155,25 +155,25 @@ describe('withErrorHandler', () => {
     const handler = jest.fn().mockRejectedValue(
       new AppError('Test error', 500, true, { debug: 'info' })
     );
-    
+
     const wrappedHandler = withErrorHandler(handler, { isAdminRoute: false });
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(data.error.details).toBeUndefined();
   });
 
   it('should handle non-Error thrown values', async () => {
     const handler = jest.fn().mockRejectedValue('String error');
-    
+
     const wrappedHandler = withErrorHandler(handler);
     const request = new NextRequest('http://localhost/api/test');
-    
+
     const response = await wrappedHandler(request);
     const data = await response.json();
-    
+
     expect(response.status).toBe(500);
     expect(data.error.code).toBe('InternalServerError');
   });
@@ -182,10 +182,10 @@ describe('withErrorHandler', () => {
 describe('withServerActionErrorHandler', () => {
   it('should return success result when no error occurs', async () => {
     const action = jest.fn().mockResolvedValue({ id: '123', name: 'Test' });
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     const result = await wrappedAction('arg1', 'arg2');
-    
+
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toEqual({ id: '123', name: 'Test' });
@@ -196,10 +196,10 @@ describe('withServerActionErrorHandler', () => {
     const action = jest.fn().mockRejectedValue(
       new ValidationError('Invalid input', { email: 'Invalid email' })
     );
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     const result = await wrappedAction();
-    
+
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.message).toBe('Invalid input');
@@ -212,10 +212,10 @@ describe('withServerActionErrorHandler', () => {
     const action = jest.fn().mockRejectedValue(
       new AuthorizationError('Insufficient permissions')
     );
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     const result = await wrappedAction();
-    
+
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.message).toBe('Insufficient permissions');
@@ -227,10 +227,10 @@ describe('withServerActionErrorHandler', () => {
     const action = jest.fn().mockRejectedValue(
       new Error('Unexpected error')
     );
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     const result = await wrappedAction();
-    
+
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('InternalServerError');
@@ -242,10 +242,10 @@ describe('withServerActionErrorHandler', () => {
     const action = jest.fn().mockRejectedValue(
       new Error('Test error')
     );
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     await wrappedAction('arg1', 123);
-    
+
     expect(consoleErrorSpy).toHaveBeenCalled();
     const logCall = consoleErrorSpy.mock.calls[0];
     const logData = JSON.parse(logCall[1]);
@@ -254,10 +254,10 @@ describe('withServerActionErrorHandler', () => {
 
   it('should handle non-Error thrown values', async () => {
     const action = jest.fn().mockRejectedValue('String error');
-    
+
     const wrappedAction = withServerActionErrorHandler(action);
     const result = await wrappedAction();
-    
+
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('InternalServerError');
@@ -268,20 +268,20 @@ describe('withServerActionErrorHandler', () => {
 describe('successResponse', () => {
   it('should create success response with default status 200', () => {
     const response = successResponse({ id: '123', name: 'Test' });
-    
+
     expect(response.status).toBe(200);
   });
 
   it('should create success response with custom status', () => {
     const response = successResponse({ id: '123' }, 201);
-    
+
     expect(response.status).toBe(201);
   });
 
   it('should format data correctly', async () => {
     const response = successResponse({ id: '123', name: 'Test' });
     const data = await response.json();
-    
+
     expect(data).toEqual({ data: { id: '123', name: 'Test' } });
   });
 });
@@ -290,7 +290,7 @@ describe('errorResponse', () => {
   it('should create error response with correct status', () => {
     const error = new ValidationError('Invalid input');
     const response = errorResponse(error);
-    
+
     expect(response.status).toBe(400);
   });
 
@@ -298,7 +298,7 @@ describe('errorResponse', () => {
     const error = new NotFoundError('Project');
     const response = errorResponse(error);
     const data = await response.json();
-    
+
     expect(data.error.message).toBe('Project not found');
     expect(data.error.code).toBe('NotFoundError');
     expect(data.error.statusCode).toBe(404);
@@ -306,11 +306,11 @@ describe('errorResponse', () => {
 
   it('should respect admin flag', async () => {
     const error = new AppError('Test error', 500, true, { debug: 'info' });
-    
+
     const adminResponse = errorResponse(error, true);
     const adminData = await adminResponse.json();
     expect(adminData.error.details).toEqual({ debug: 'info' });
-    
+
     const userResponse = errorResponse(error, false);
     const userData = await userResponse.json();
     expect(userData.error.details).toBeUndefined();
@@ -320,19 +320,19 @@ describe('errorResponse', () => {
 describe('isOperationalError', () => {
   it('should return true for operational AppError', () => {
     const error = new ValidationError('Invalid input');
-    
+
     expect(isOperationalError(error)).toBe(true);
   });
 
   it('should return false for non-operational AppError', () => {
     const error = new AppError('Test error', 500, false);
-    
+
     expect(isOperationalError(error)).toBe(false);
   });
 
   it('should return false for generic Error', () => {
     const error = new Error('Test error');
-    
+
     expect(isOperationalError(error)).toBe(false);
   });
 });
@@ -340,13 +340,13 @@ describe('isOperationalError', () => {
 describe('getErrorStatusCode', () => {
   it('should return status code from AppError', () => {
     const error = new ValidationError('Invalid input');
-    
+
     expect(getErrorStatusCode(error)).toBe(400);
   });
 
   it('should return 500 for generic Error', () => {
     const error = new Error('Test error');
-    
+
     expect(getErrorStatusCode(error)).toBe(500);
   });
 });
@@ -362,13 +362,13 @@ describe('Error Handling - Database and Server Errors', () => {
         error.constructor = { name: 'PrismaClientInitializationError' };
         throw error;
       });
-      
+
       const wrappedHandler = withErrorHandler(handler);
       const request = new NextRequest('http://localhost/api/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       expect(response.status).toBe(503);
       expect(data.error.code).toBe('DatabaseError');
       expect(data.error.message).toBe('Service temporarily unavailable');
@@ -380,13 +380,13 @@ describe('Error Handling - Database and Server Errors', () => {
         error.constructor = { name: 'PrismaClientRustPanicError' };
         throw error;
       });
-      
+
       const wrappedHandler = withErrorHandler(handler);
       const request = new NextRequest('http://localhost/api/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       expect(response.status).toBe(503);
       expect(data.error.code).toBe('DatabaseError');
     });
@@ -395,13 +395,13 @@ describe('Error Handling - Database and Server Errors', () => {
       const handler = jest.fn().mockRejectedValue(
         new (require('../../lib/errors').DatabaseError)('Database connection lost')
       );
-      
+
       const wrappedHandler = withErrorHandler(handler);
       const request = new NextRequest('http://localhost/api/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       expect(response.status).toBe(503);
       expect(data.error.message).toBe('Database connection lost');
       expect(data.error.code).toBe('DatabaseError');
@@ -413,13 +413,13 @@ describe('Error Handling - Database and Server Errors', () => {
       const handler = jest.fn().mockRejectedValue(
         new Error('Unexpected internal error')
       );
-      
+
       const wrappedHandler = withErrorHandler(handler);
       const request = new NextRequest('http://localhost/api/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       expect(response.status).toBe(500);
       expect(data.error.statusCode).toBe(500);
       expect(data.error.code).toBe('InternalServerError');
@@ -428,19 +428,19 @@ describe('Error Handling - Database and Server Errors', () => {
     it('should log server errors with full details', async () => {
       const testError = new Error('Critical server error');
       const handler = jest.fn().mockRejectedValue(testError);
-      
+
       const wrappedHandler = withErrorHandler(handler);
       const request = new NextRequest('http://localhost/api/test', {
         method: 'POST',
       });
-      
+
       await wrappedHandler(request);
-      
+
       // Verify error was logged
       expect(consoleErrorSpy).toHaveBeenCalled();
       const logCall = consoleErrorSpy.mock.calls[0];
       expect(logCall[0]).toBe('[ERROR]');
-      
+
       // Verify log contains error details
       const logData = JSON.parse(logCall[1]);
       expect(logData.name).toBe('Error');
@@ -453,15 +453,15 @@ describe('Error Handling - Database and Server Errors', () => {
     it('should log server errors in server actions', async () => {
       const testError = new Error('Server action failed');
       const action = jest.fn().mockRejectedValue(testError);
-      
+
       const wrappedAction = withServerActionErrorHandler(action);
       await wrappedAction('arg1', 'arg2');
-      
+
       // Verify error was logged
       expect(consoleErrorSpy).toHaveBeenCalled();
       const logCall = consoleErrorSpy.mock.calls[0];
       expect(logCall[0]).toBe('[ERROR]');
-      
+
       // Verify log contains error details
       const logData = JSON.parse(logCall[1]);
       expect(logData.message).toBe('Server action failed');
@@ -472,13 +472,13 @@ describe('Error Handling - Database and Server Errors', () => {
       const handler = jest.fn().mockRejectedValue(
         new Error('Internal error: database password is abc123')
       );
-      
+
       const wrappedHandler = withErrorHandler(handler, { isAdminRoute: false });
       const request = new NextRequest('http://localhost/api/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       // Should not expose internal error details to non-admin
       expect(data.error.message).toBe('An unexpected error occurred. Please try again later.');
       expect(data.error.message).not.toContain('password');
@@ -489,13 +489,13 @@ describe('Error Handling - Database and Server Errors', () => {
       const handler = jest.fn().mockRejectedValue(
         new Error('Internal error with details')
       );
-      
+
       const wrappedHandler = withErrorHandler(handler, { isAdminRoute: true });
       const request = new NextRequest('http://localhost/api/admin/test');
-      
+
       const response = await wrappedHandler(request);
       const data = await response.json();
-      
+
       // Admin should see the actual error message
       expect(data.error.message).toBe('Internal error with details');
       expect(data.error.details).toBeDefined();

@@ -3,7 +3,7 @@
 /**
  * Project List Component
  * Displays projects and handles creation and switching
- * 
+ *
  * Requirements: 3.1, 3.2, 3.3, 3.4, 3.12
  */
 

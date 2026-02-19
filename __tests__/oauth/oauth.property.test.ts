@@ -1,6 +1,6 @@
 /**
  * Property-based tests for OAuth authentication
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -61,10 +61,10 @@ describe('OAuth Property Tests', () => {
 
   /**
    * Property 29: OAuth Email Verification
-   * 
+   *
    * For any Google OAuth response, if the email field is not provided,
    * the system must reject the authentication and display an error.
-   * 
+   *
    * **Validates: Requirements 2.3**
    */
   test('Property 29: OAuth rejects authentication when email is missing', async () => {
@@ -86,7 +86,7 @@ describe('OAuth Property Tests', () => {
         async (userInfoData, code, state) => {
           // Reset all mocks for this iteration
           jest.clearAllMocks();
-          
+
           // Setup: Mock cookie store with matching state
           mockCookieStore.get.mockReturnValue({ value: state });
 
@@ -152,7 +152,7 @@ describe('OAuth Property Tests', () => {
             // Email is provided - authentication should succeed
             expect(response.status).toBe(307); // Redirect status
             const location = response.headers.get('location');
-            
+
             // Should redirect to onboarding (new user) or home (existing user)
             expect(location).toMatch(/\/(onboarding|\/)/);
             expect(location).not.toContain('error=email_required');
@@ -170,7 +170,7 @@ describe('OAuth Property Tests', () => {
 
   /**
    * Additional property: OAuth email verification with various email formats
-   * 
+   *
    * Tests that the system correctly handles different email formats and
    * edge cases in the email field.
    */
@@ -188,7 +188,7 @@ describe('OAuth Property Tests', () => {
         async (emailValue, code, state) => {
           // Reset all mocks for this iteration
           jest.clearAllMocks();
-          
+
           // Setup mocks
           mockCookieStore.get.mockReturnValue({ value: state });
 

@@ -4,7 +4,7 @@
 
 /**
  * Onboarding Page Tests
- * 
+ *
  * Tests the first-time user onboarding flow
  * Requirements: 2.5
  */

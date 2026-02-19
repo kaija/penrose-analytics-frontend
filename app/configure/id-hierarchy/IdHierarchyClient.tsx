@@ -34,8 +34,8 @@ interface IdHierarchyClientProps {
   userRole: string;
 }
 
-function SortableItem({ item, onDelete, canEdit }: { 
-  item: IdHierarchyItem; 
+function SortableItem({ item, onDelete, canEdit }: {
+  item: IdHierarchyItem;
   onDelete: (id: string) => void;
   canEdit: boolean;
 }) {
@@ -359,9 +359,9 @@ export default function IdHierarchyClient({ projectId, userRole }: IdHierarchyCl
                 >
                   <div className="space-y-2">
                     {activeItems.map((item) => (
-                      <SortableItem 
-                        key={item.id} 
-                        item={item} 
+                      <SortableItem
+                        key={item.id}
+                        item={item}
                         onDelete={deleteIdentity}
                         canEdit={canEdit}
                       />

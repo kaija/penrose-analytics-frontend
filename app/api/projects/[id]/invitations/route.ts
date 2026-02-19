@@ -1,9 +1,9 @@
 /**
  * Project Invitations API Routes
- * 
+ *
  * GET /api/projects/[id]/invitations - List invitations
  * POST /api/projects/[id]/invitations - Create invitation
- * 
+ *
  * Requirements: 5.1, 5.4, 5.10
  */
 
@@ -11,12 +11,12 @@ import { NextRequest } from 'next/server';
 import { withErrorHandler, successResponse } from '@/lib/error-handler';
 import { validateSession } from '@/lib/session';
 import { getUserRole } from '@/lib/project';
-import { 
-  createInvitation, 
-  sendInvitationEmail 
+import {
+  createInvitation,
+  sendInvitationEmail
 } from '@/lib/invitation';
-import { 
-  AuthenticationError, 
+import {
+  AuthenticationError,
   AuthorizationError,
   NotFoundError,
   ValidationError,
@@ -30,7 +30,7 @@ import { Role } from '@prisma/client';
  * GET /api/projects/[id]/invitations
  * List all invitations for a project
  * Only owners and admins can view invitations
- * 
+ *
  * Requirements: 5.10
  */
 export const GET = withErrorHandler(async (
@@ -83,7 +83,7 @@ export const GET = withErrorHandler(async (
  * POST /api/projects/[id]/invitations
  * Create a new invitation for a user to join the project
  * Only owners and admins can create invitations
- * 
+ *
  * Requirements: 5.1, 5.4
  */
 export const POST = withErrorHandler(async (

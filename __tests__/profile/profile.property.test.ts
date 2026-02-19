@@ -1,6 +1,6 @@
 /**
  * Property-based tests for profile management
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
  */
@@ -27,10 +27,10 @@ describe('Profile Management Property Tests', () => {
 
   /**
    * Property 15: Profile Search Filtering
-   * 
+   *
    * For any profile search query with filters, all returned results must match
    * the specified filter criteria (search term, attributes, etc.).
-   * 
+   *
    * **Validates: Requirements 10.3**
    */
   test('Property 15: Profile search filtering returns matching results', async () => {
@@ -51,7 +51,7 @@ describe('Profile Management Property Tests', () => {
         ), // all profiles in project
         async (projectId, search, externalId, page, pageSize, allProfiles) => {
           const now = new Date();
-          
+
           // Build filters
           const filters: ProfileSearchFilters = {};
           if (search) filters.search = search;
@@ -146,7 +146,7 @@ describe('Profile Management Property Tests', () => {
 
   /**
    * Additional property: Empty search returns all profiles
-   * 
+   *
    * For any project, searching without filters should return all profiles
    * in that project (subject to pagination).
    */
@@ -186,7 +186,7 @@ describe('Profile Management Property Tests', () => {
           // Should return profiles from the project
           expect(result.total).toBe(mockProfiles.length);
           expect(result.profiles).toHaveLength(paginatedProfiles.length);
-          
+
           // All returned profiles should belong to the project
           for (const profile of result.profiles) {
             expect(profile.projectId).toBe(projectId);
@@ -199,7 +199,7 @@ describe('Profile Management Property Tests', () => {
 
   /**
    * Additional property: Search is case-insensitive
-   * 
+   *
    * For any search term, the search should match profiles regardless of case.
    */
   test('Property: Search is case-insensitive', async () => {
@@ -210,7 +210,7 @@ describe('Profile Management Property Tests', () => {
         fc.constantFrom('lower', 'upper', 'mixed'), // case variation
         async (projectId, searchTerm, caseVariation) => {
           const now = new Date();
-          
+
           // Create a profile that should match
           const matchingExternalId = `user-${searchTerm.toLowerCase()}-123`;
           const mockProfile = {
@@ -249,7 +249,7 @@ describe('Profile Management Property Tests', () => {
 
           // Should find the profile regardless of case
           expect(result.total).toBeGreaterThanOrEqual(0);
-          
+
           // Verify Prisma was called with case-insensitive mode
           expect(prisma.profile.findMany).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -268,7 +268,7 @@ describe('Profile Management Property Tests', () => {
 
   /**
    * Additional property: Pagination consistency
-   * 
+   *
    * For any search, the sum of profiles across all pages should equal the total count.
    */
   test('Property: Pagination is consistent with total count', async () => {
@@ -279,7 +279,7 @@ describe('Profile Management Property Tests', () => {
         fc.integer({ min: 5, max: 20 }), // pageSize
         async (projectId, totalProfiles, pageSize) => {
           const now = new Date();
-          
+
           // Create mock profiles
           const mockProfiles = Array.from({ length: totalProfiles }, (_, i) => ({
             id: `profile-${i}`,
@@ -310,7 +310,7 @@ describe('Profile Management Property Tests', () => {
             expect(result.total).toBe(totalProfiles);
             expect(result.page).toBe(page);
             expect(result.pageSize).toBe(pageSize);
-            
+
             totalRetrieved += result.profiles.length;
 
             // Last page might have fewer profiles
@@ -332,7 +332,7 @@ describe('Profile Management Property Tests', () => {
 
   /**
    * Additional property: ExternalId filter takes precedence over search
-   * 
+   *
    * When both externalId and search filters are provided, externalId should be used.
    */
   test('Property: ExternalId filter takes precedence over search', async () => {
@@ -343,7 +343,7 @@ describe('Profile Management Property Tests', () => {
         fc.string({ minLength: 1, maxLength: 20 }), // externalId filter
         async (projectId, search, externalId) => {
           const now = new Date();
-          
+
           // Assume externalId doesn't match search
           fc.pre(search !== externalId);
 

@@ -1,11 +1,11 @@
 /**
  * Unit tests for invitation API routes
- * 
+ *
  * Tests:
  * - POST /api/projects/[id]/invitations - create invitation
  * - POST /api/invitations/[id]/resend - resend invitation
  * - POST /api/invitations/accept - process acceptance
- * 
+ *
  * Requirements: 5.1, 5.4, 5.5, 5.10
  */
 

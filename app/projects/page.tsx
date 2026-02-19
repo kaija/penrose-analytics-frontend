@@ -1,7 +1,7 @@
 /**
  * Projects Page
  * Displays user's projects and provides project creation functionality
- * 
+ *
  * Requirements: 3.1, 3.2, 3.3, 3.4, 3.12
  */
 
@@ -31,8 +31,8 @@ export default async function ProjectsPage() {
   const isSuperAdmin = user ? superAdminEmails.includes(user.email) : false;
 
   return (
-    <ProjectsWrapper 
-      projects={projects} 
+    <ProjectsWrapper
+      projects={projects}
       activeProjectId={session.activeProjectId}
       isSuperAdmin={isSuperAdmin}
     />

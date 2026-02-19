@@ -1,6 +1,6 @@
 /**
  * ID Hierarchy API Routes
- * 
+ *
  * GET /api/projects/[id]/id-hierarchy - Get ID hierarchy for a project
  * POST /api/projects/[id]/id-hierarchy - Add a new identity
  * PUT /api/projects/[id]/id-hierarchy - Update identity priorities

@@ -1,9 +1,9 @@
 /**
  * Property-based tests for invitation system
- * 
+ *
  * Feature: prism
  * Testing Framework: fast-check
- * 
+ *
  * IMPORTANT: Run invitation tests sequentially to avoid database conflicts:
  * npm test -- --runInBand __tests__/invitation/
  */
@@ -33,7 +33,7 @@ describe('Invitation System Property Tests', () => {
     createdMembershipIds.length = 0;
     createdProjectIds.length = 0;
     createdUserIds.length = 0;
-    
+
     jest.clearAllMocks();
   });
 
@@ -46,28 +46,28 @@ describe('Invitation System Property Tests', () => {
       });
       createdInvitationIds.length = 0;
     }
-    
+
     if (createdMembershipIds.length > 0) {
       await prisma.projectMembership.deleteMany({
         where: { id: { in: createdMembershipIds } },
       });
       createdMembershipIds.length = 0;
     }
-    
+
     if (createdProjectIds.length > 0) {
       await prisma.project.deleteMany({
         where: { id: { in: createdProjectIds } },
       });
       createdProjectIds.length = 0;
     }
-    
+
     if (createdUserIds.length > 0) {
       await prisma.user.deleteMany({
         where: { id: { in: createdUserIds } },
       });
       createdUserIds.length = 0;
     }
-    
+
     jest.clearAllMocks();
   });
 
@@ -77,13 +77,13 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Property 11: Invitation Creation Invariants
-   * 
+   *
    * For any invitation created by an owner or admin, the system must:
    * - Generate a unique token
    * - Set an expiration timestamp
    * - Store the projectId/invitedEmail/role
    * - Send an email containing the acceptance link with the token
-   * 
+   *
    * **Validates: Requirements 5.1, 5.2, 5.3, 5.4**
    */
   test('Property 11: Invitation creation invariants', async () => {
@@ -116,7 +116,7 @@ describe('Invitation System Property Tests', () => {
             },
           });
           createdProjectIds.push(project.id);
-          
+
           // Verify project was created
           expect(project).toBeDefined();
           expect(project.id).toBeDefined();
@@ -216,7 +216,7 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Additional property: Token uniqueness across multiple invitations
-   * 
+   *
    * For any sequence of invitation creations, all generated tokens must be unique.
    */
   test('Property: All invitation tokens are unique', async () => {
@@ -281,7 +281,7 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Additional property: Invitation expiration is always in the future
-   * 
+   *
    * For any invitation created, the expiresAt timestamp must be in the future.
    */
   test('Property: Invitation expiration is always in the future', async () => {
@@ -341,7 +341,7 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Additional property: Invitation stores all required fields
-   * 
+   *
    * For any invitation created, all required fields must be present and valid.
    */
   test('Property: Invitation stores all required fields', async () => {
@@ -416,11 +416,11 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Property 13: Successful Invitation Acceptance
-   * 
+   *
    * For any valid invitation acceptance (matching email, not expired), the system must:
    * - Create a ProjectMembership with the specified role
    * - Mark the invitation's acceptedAt timestamp
-   * 
+   *
    * **Validates: Requirements 5.7, 5.8**
    */
   test('Property 13: Successful invitation acceptance', async () => {
@@ -506,7 +506,7 @@ describe('Invitation System Property Tests', () => {
           });
           expect(updatedInvitation?.acceptedAt).not.toBeNull();
           expect(updatedInvitation?.acceptedAt).toBeInstanceOf(Date);
-          
+
           // Verify acceptedAt is a recent timestamp (within last few seconds)
           const acceptedAtTime = updatedInvitation!.acceptedAt!.getTime();
           const now = Date.now();
@@ -525,14 +525,14 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Property 12: Email Verification on Invitation Acceptance
-   * 
+   *
    * For any invitation acceptance attempt, the system must verify that the
    * authenticated user's email exactly matches the invitedEmail field before
    * creating a ProjectMembership.
-   * 
+   *
    * - If emails match, acceptance succeeds
    * - If emails don't match, acceptance fails with appropriate error
-   * 
+   *
    * **Validates: Requirements 5.6**
    */
   test('Property 12: Email verification on invitation acceptance', async () => {
@@ -643,12 +643,12 @@ describe('Invitation System Property Tests', () => {
 
   /**
    * Property 30: Invitation Email Content
- * 
+ *
  * For any invitation email sent, the email body must contain:
  * - The acceptance link with token
  * - The project name
  * - The inviter's name
- * 
+ *
  * **Validates: Requirements 16.3, 16.4**
  */
 test('Property 30: Invitation email content', async () => {

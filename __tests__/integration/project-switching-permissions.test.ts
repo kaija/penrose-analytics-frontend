@@ -1,9 +1,9 @@
 /**
  * Integration Test: Project Switching with Permission Enforcement
- * 
+ *
  * Tests the complete flow of switching between projects and verifying
  * that permissions are correctly enforced for each project context.
- * 
+ *
  * Requirements: 3.4-3.12, 4.1-4.10, 15.1-15.5
  */
 

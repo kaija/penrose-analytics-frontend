@@ -1,7 +1,7 @@
 /**
  * Team Members Page (Configure > Users)
  * Displays project members and allows management
- * 
+ *
  * Requirements: 17.1, 17.2, 17.3, 17.4
  */
 
@@ -60,8 +60,8 @@ export default async function TeamMembersPage() {
         </p>
       </div>
 
-      <TeamMembersList 
-        members={members} 
+      <TeamMembersList
+        members={members}
         currentUserId={session.userId}
         currentUserRole={role}
         projectId={session.activeProjectId}

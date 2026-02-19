@@ -1,9 +1,9 @@
 /**
  * Integration Test: Invitation → Acceptance → Member Access Flow
- * 
+ *
  * Tests the complete flow from invitation creation through acceptance
  * and verification of member access to project resources.
- * 
+ *
  * Requirements: 5.1-5.11, 17.1-17.6, 4.1-4.10
  */
 

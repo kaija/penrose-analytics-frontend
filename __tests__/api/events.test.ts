@@ -1,8 +1,8 @@
 /**
  * Event API Routes Tests
- * 
+ *
  * Tests for event tracking and querying via API routes
- * 
+ *
  * Requirements: 11.1, 11.2, 11.3, 11.4, 11.5
  */
 
@@ -119,7 +119,7 @@ describe('Event API Routes', () => {
 
     it('should track event with custom timestamp', async () => {
       const customTimestamp = new Date('2024-01-10T15:30:00Z');
-      
+
       (validateSession as jest.Mock).mockResolvedValue({
         userId: 'user-123',
         activeProjectId: 'project-123',
@@ -500,7 +500,7 @@ describe('Event API Routes', () => {
       });
 
       (prisma.event.findUnique as jest.Mock).mockResolvedValue(mockEvent);
-      
+
       // User is not a member of the project
       (prisma.projectMembership.findUnique as jest.Mock).mockResolvedValue(null);
 

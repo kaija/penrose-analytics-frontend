@@ -4,7 +4,7 @@ import { validateSession } from '@/lib/session';
 export async function GET(request: NextRequest) {
   try {
     const session = await validateSession();
-    
+
     if (!session?.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     // Get user email from database
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
-    
+
     try {
       const user = await prisma.user.findUnique({
         where: { id: session.userId },

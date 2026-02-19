@@ -14,7 +14,7 @@ describe('Property 18: Migration History Tracking', () => {
 
   /**
    * Property 18: Migration History Tracking
-   * For any successfully applied Prisma migration, the system must record 
+   * For any successfully applied Prisma migration, the system must record
    * the migration in the database migration history table.
    */
   it('should record all applied migrations in _prisma_migrations table', async () => {
@@ -67,7 +67,7 @@ describe('Property 18: Migration History Tracking', () => {
             if (migration.rolled_back_at === null) {
               expect(migration.finished_at).not.toBeNull();
               expect(migration.finished_at).toBeInstanceOf(Date);
-              
+
               // finished_at must be after or equal to started_at
               expect(migration.finished_at!.getTime()).toBeGreaterThanOrEqual(
                 migration.started_at.getTime()
