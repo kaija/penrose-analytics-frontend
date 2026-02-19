@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import MainLayout from '@/components/MainLayout';
 import ConfigureSidebar from '../ConfigureSidebar';
-import { Zap, Plus, Pencil, Trash2, X, Save, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
+import { Zap, Plus, Pencil, Trash2, X, Save, ChevronDown, ChevronRight, Loader2, Lock } from 'lucide-react';
 import type { EventPropertySchema, SchemaDataType } from '@/lib/types/schema';
+import { DEFAULT_EVENT_SCHEMAS } from '@/lib/constants/default-event-schema';
 
 const DATA_TYPES: SchemaDataType[] = ['string', 'number', 'boolean', 'date', 'duration'];
 
@@ -303,68 +304,136 @@ export default function EventSchemaClient({ projectId }: EventSchemaClientProps)
         )}
 
         {!loading && !error && schemas.length > 0 && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">事件名稱</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">顯示名稱</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">屬性數</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">操作</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {schemas.map(schema => (
-                  <React.Fragment key={schema.id}>
-                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button type="button" onClick={() => setExpandedId(expandedId === schema.id ? null : schema.id)}
-                          className="flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400">
-                          {expandedId === schema.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                          <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">{schema.eventName}</code>
-                        </button>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{schema.displayName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{schema.properties.length}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {!schema.id.startsWith('inferred-') && (
-                            <>
-                              <button type="button" onClick={() => openEdit(schema)}
-                                className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded transition-colors" title="編輯">
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                              <button type="button" onClick={() => handleDelete(schema)} disabled={deletingId === schema.id}
-                                className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 disabled:opacity-50 rounded transition-colors" title="刪除">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
+          <div className="space-y-6">
+            {/* Default Event Schemas Section */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Lock className="w-4 h-4 text-gray-400" />
+                <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  系統預設事件
+                </h2>
+              </div>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">事件名稱</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">顯示名稱</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">說明</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">屬性數</th>
                     </tr>
-                    {expandedId === schema.id && schema.properties.length > 0 && (
-                      <tr>
-                        <td colSpan={4} className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4">
-                          <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                            {schema.displayName} 的屬性
-                          </h3>
-                          <div className="grid grid-cols-3 gap-2">
-                            {schema.properties.map((p, i) => (
-                              <div key={i} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                                <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded">{p.field}</code>
-                                <span className="text-gray-400">·</span>
-                                <span>{p.dataType}</span>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {DEFAULT_EVENT_SCHEMAS.map((schema, index) => (
+                      <React.Fragment key={`default-${schema.eventName}`}>
+                        <tr className="bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <button type="button" onClick={() => setExpandedId(expandedId === `default-${schema.eventName}` ? null : `default-${schema.eventName}`)}
+                              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
+                              {expandedId === `default-${schema.eventName}` ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">{schema.eventName}</code>
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">{schema.displayName}</td>
+                          <td className="px-6 py-4 text-sm text-gray-400 dark:text-gray-500 truncate max-w-xs">{schema.description}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{schema.properties.length}</td>
+                        </tr>
+                        {expandedId === `default-${schema.eventName}` && schema.properties.length > 0 && (
+                          <tr>
+                            <td colSpan={4} className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4">
+                              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
+                                {schema.displayName} 的屬性
+                              </h3>
+                              <div className="grid grid-cols-3 gap-2">
+                                {schema.properties.map((p, i) => (
+                                  <div key={i} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                    <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded">{p.field}</code>
+                                    <span className="text-gray-400">·</span>
+                                    <span>{p.dataType}</span>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Custom Event Schemas Section */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  自訂事件
+                </h2>
+              </div>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">事件名稱</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">顯示名稱</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">屬性數</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {schemas.map(schema => (
+                      <React.Fragment key={schema.id}>
+                        <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <button type="button" onClick={() => setExpandedId(expandedId === schema.id ? null : schema.id)}
+                              className="flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400">
+                              {expandedId === schema.id ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">{schema.eventName}</code>
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{schema.displayName}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{schema.properties.length}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {!schema.id.startsWith('inferred-') && (
+                                <>
+                                  <button type="button" onClick={() => openEdit(schema)}
+                                    className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded transition-colors" title="編輯">
+                                    <Pencil className="w-4 h-4" />
+                                  </button>
+                                  <button type="button" onClick={() => handleDelete(schema)} disabled={deletingId === schema.id}
+                                    className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 disabled:opacity-50 rounded transition-colors" title="刪除">
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                        {expandedId === schema.id && schema.properties.length > 0 && (
+                          <tr>
+                            <td colSpan={4} className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4">
+                              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
+                                {schema.displayName} 的屬性
+                              </h3>
+                              <div className="grid grid-cols-3 gap-2">
+                                {schema.properties.map((p, i) => (
+                                  <div key={i} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                    <code className="bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded">{p.field}</code>
+                                    <span className="text-gray-400">·</span>
+                                    <span>{p.dataType}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>

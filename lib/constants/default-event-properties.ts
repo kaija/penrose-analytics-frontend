@@ -28,7 +28,7 @@ export const DEFAULT_EVENT_PROPERTIES: DefaultEventProperty[] = [
   // Technical properties
   { field: 'domain', displayName: 'Domain', description: 'Domain running the tracker script', dataType: 'string', icon: 'globe', category: 'technical' },
   { field: 'integration', displayName: 'Integration', description: 'Library or integration used to track this event', dataType: 'string', icon: 'package', category: 'technical' },
-  { field: 'app', displayName: 'App', description: 'Appier App ID', dataType: 'string', icon: 'smartphone', category: 'technical' },
+  { field: 'app', displayName: 'App', description: 'App ID', dataType: 'string', icon: 'smartphone', category: 'technical' },
   { field: 'platform', displayName: 'Platform', description: 'The platform this event was tracked from (web, ios, android, etc.)', dataType: 'string', icon: 'monitor', category: 'technical' },
   { field: 'is_https', displayName: 'Is HTTPS', description: 'Whether the event was tracked securely over SSL/TLS', dataType: 'boolean', icon: 'lock', category: 'technical' },
   { field: 'event_type', displayName: 'Event Type', description: 'Active, Passive or System', dataType: 'string', icon: 'activity', category: 'technical' },

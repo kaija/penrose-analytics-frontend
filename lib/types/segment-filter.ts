@@ -85,12 +85,13 @@ export interface SegmentAggregation {
 }
 
 export type AggregationMetric =
-  | 'count_events' | 'count_unique_events'
+  | 'count_events' | 'count_unique_events' | 'count_visits'
   | 'sum' | 'mean' | 'min' | 'max';
 
 export const AGGREGATION_METRIC_LABELS: Record<AggregationMetric, string> = {
   count_events: 'Count Events',
   count_unique_events: 'Count Unique Events',
+  count_visits: 'Count Visits',
   sum: 'Sum', mean: 'Mean', min: 'Min', max: 'Max',
 };
 

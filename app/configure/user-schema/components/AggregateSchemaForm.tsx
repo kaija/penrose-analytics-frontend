@@ -26,6 +26,17 @@ interface Props {
   onCancel: () => void;
 }
 
+interface EventSchema {
+  id?: string;
+  eventName: string;
+  displayName: string;
+  properties?: Array<{
+    field: string;
+    displayName: string;
+    dataType: string;
+  }>;
+}
+
 export default function AggregateSchemaForm({ projectId, editing, onSuccess, onCancel }: Props) {
   const [field, setField] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -37,13 +48,44 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
   const [operation, setOperation] = useState<AggregateOperation>('count');
   const [timeframeValue, setTimeframeValue] = useState(90);
   const [timeframeUnit, setTimeframeUnit] = useState<'days' | 'weeks' | 'months' | 'years'>('days');
+  const [eventNameMode, setEventNameMode] = useState<'select' | 'custom'>('select');
   const [eventName, setEventName] = useState('');
   const [eventProperty, setEventProperty] = useState('');
+  const [eventPropertyMode, setEventPropertyMode] = useState<'select' | 'custom'>('select');
   const [aggregateBy, setAggregateBy] = useState<'unique' | 'total'>('total');
   const [filters, setFilters] = useState<EventFilterCondition[]>([]);
   
+  // Event schemas from API
+  const [eventSchemas, setEventSchemas] = useState<EventSchema[]>([]);
+  const [loadingSchemas, setLoadingSchemas] = useState(false);
+  
+  // Get properties for selected event
+  const selectedEventSchema = eventSchemas.find(s => s.eventName === eventName);
+  const availableProperties = selectedEventSchema?.properties || [];
+  
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch event schemas
+  useEffect(() => {
+    const fetchEventSchemas = async () => {
+      try {
+        setLoadingSchemas(true);
+        const res = await fetch(`/api/projects/${projectId}/schema/events`);
+        if (res.ok) {
+          const json = await res.json();
+          // API returns { data: { events: [...] } } or { events: [...] }
+          const events = json.data?.events || json.events || [];
+          setEventSchemas(Array.isArray(events) ? events : []);
+        }
+      } catch (err) {
+        console.error('Failed to load event schemas:', err);
+      } finally {
+        setLoadingSchemas(false);
+      }
+    };
+    fetchEventSchemas();
+  }, [projectId]);
 
   useEffect(() => {
     if (editing) {
@@ -60,13 +102,20 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
           setTimeframeValue(config.timeframe.value ?? 90);
           setTimeframeUnit(config.timeframe.unit ?? 'days');
         }
-        setEventName(config.eventName ?? '');
+        const eventNameValue = config.eventName ?? '';
+        setEventName(eventNameValue);
+        // Check if the event name exists in schemas
+        if (eventNameValue && eventSchemas.some(s => s.eventName === eventNameValue)) {
+          setEventNameMode('select');
+        } else if (eventNameValue) {
+          setEventNameMode('custom');
+        }
         setEventProperty(config.eventProperty ?? '');
         setAggregateBy(config.aggregateBy ?? 'total');
         setFilters(config.filters ?? []);
       }
     }
-  }, [editing]);
+  }, [editing, eventSchemas]);
 
   const addFilter = () => {
     setFilters([...filters, { property: '', operator: 'is', value: '' }]);
@@ -205,18 +254,94 @@ export default function AggregateSchemaForm({ projectId, editing, onSuccess, onC
               </div>
             </div>
 
-            <div>
+            {/* Event Name with mode selector */}
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">事件名稱</label>
-              <input type="text" value={eventName} onChange={e => setEventName(e.target.value)}
-                placeholder="留空表示任何事件"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm" />
+              <div className="flex gap-2 mb-2">
+                <button type="button"
+                  onClick={() => { setEventNameMode('select'); setEventName(''); }}
+                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                    eventNameMode === 'select'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}>
+                  從列表選擇
+                </button>
+                <button type="button"
+                  onClick={() => { setEventNameMode('custom'); setEventName(''); }}
+                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                    eventNameMode === 'custom'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}>
+                  自行輸入
+                </button>
+              </div>
+              
+              {eventNameMode === 'select' ? (
+                <select value={eventName} onChange={e => setEventName(e.target.value)}
+                  disabled={loadingSchemas}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm disabled:opacity-50">
+                  <option value="">任何事件</option>
+                  {eventSchemas.map((schema, index) => (
+                    <option key={schema.id || `event-${index}`} value={schema.eventName}>
+                      {schema.displayName} ({schema.eventName})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input type="text" value={eventName} onChange={e => setEventName(e.target.value)}
+                  placeholder="輸入事件名稱，留空表示任何事件"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm" />
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">事件屬性</label>
-              <input type="text" value={eventProperty} onChange={e => setEventProperty(e.target.value)}
-                placeholder="e.g. amount"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm" />
+              <div className="flex gap-2 mb-2">
+                <button type="button"
+                  onClick={() => { setEventPropertyMode('select'); setEventProperty(''); }}
+                  disabled={!eventName || availableProperties.length === 0}
+                  className={`px-3 py-1.5 text-xs rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    eventPropertyMode === 'select'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}>
+                  從列表選擇
+                </button>
+                <button type="button"
+                  onClick={() => { setEventPropertyMode('custom'); setEventProperty(''); }}
+                  className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+                    eventPropertyMode === 'custom'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}>
+                  自行輸入
+                </button>
+              </div>
+              
+              {eventPropertyMode === 'select' ? (
+                <select value={eventProperty} onChange={e => setEventProperty(e.target.value)}
+                  disabled={!eventName || availableProperties.length === 0}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm disabled:opacity-50">
+                  <option value="">選擇屬性</option>
+                  {availableProperties.map((prop, index) => (
+                    <option key={`${prop.field}-${index}`} value={prop.field}>
+                      {prop.displayName} ({prop.field}) - {prop.dataType}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input type="text" value={eventProperty} onChange={e => setEventProperty(e.target.value)}
+                  placeholder="e.g. amount"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm" />
+              )}
+              {eventPropertyMode === 'select' && !eventName && (
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">請先選擇事件名稱</p>
+              )}
+              {eventPropertyMode === 'select' && eventName && availableProperties.length === 0 && (
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">此事件沒有定義屬性</p>
+              )}
             </div>
           </div>
 
